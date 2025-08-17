@@ -1,0 +1,21 @@
+12025-08-17 20:45:12 ERROR [IngestGateway] - Failed to parse incoming log event: unexpected end of JSON input at line 1, column 56
+2025-08-17 20:45:15 WARN  [FileWalAppender] - WAL file size exceeded limit of 100MB, rotation triggered
+2025-08-17 20:45:20 ERROR [ArchivalService] - Failed to move WAL segment to archive: java.nio.file.NoSuchFileException: /src/main/resources/WAL/ArchivedWal/wal-0003.log
+12025-08-17 20:45:12 ERROR [IngestGateway] - Failed to parse incoming log event: unexpected end of JSON input at line 1, column 56
+2025-08-17 20:45:15 WARN  [FileWalAppender] - WAL file size exceeded limit of 100MB, rotation triggered
+2025-08-17 20:45:20 ERROR [ArchivalService] - Failed to move WAL segment to archive: java.nio.file.NoSuchFileException: /src/main/resources/WAL/ArchivedWal/wal-0003.log
+12025-08-17 20:45:12 ERROR [IngestGateway] - Failed to parse incoming log event: unexpected end of JSON input at line 1, column 56
+2025-08-17 20:45:15 WARN  [FileWalAppender] - WAL file size exceeded limit of 100MB, rotation triggered
+2025-08-17 20:45:20 ERROR [ArchivalService] - Failed to move WAL segment to archive: java.nio.file.NoSuchFileException: /src/main/resources/WAL/ArchivedWal/wal-0003.log
+12025-08-17 20:45:12 ERROR [IngestGateway] - Failed to parse incoming log event: unexpected end of JSON input at line 1, column 56
+2025-08-17 20:45:15 WARN  [FileWalAppender] - WAL file size exceeded limit of 100MB, rotation triggered
+2025-08-17 20:45:20 ERROR [ArchivalService] - Failed to move WAL segment to archive: java.nio.file.NoSuchFileException: /src/main/resources/WAL/ArchivedWal/wal-0003.log
+12025-08-17 20:45:12 ERROR [IngestGateway] - Failed to parse incoming log event: unexpected end of JSON input at line 1, column 56
+2025-08-17 20:45:15 WARN  [FileWalAppender] - WAL file size exceeded limit of 100MB, rotation triggered
+2025-08-17 20:45:20 ERROR [ArchivalService] - Failed to move WAL segment to archive: java.nio.file.NoSuchFileException: /src/main/resources/WAL/ArchivedWal/wal-0003.log
+12025-08-17 20:45:12 ERROR [IngestGateway] - Failed to parse incoming log event: unexpected end of JSON input at line 1, column 56
+2025-08-17 20:45:15 WARN  [FileWalAppender] - WAL file size exceeded limit of 100MB, rotation triggered
+2025-08-17 20:45:20 ERROR [ArchivalService] - Failed to move WAL segment to archive: java.nio.file.NoSuchFileException: /src/main/resources/WAL/ArchivedWal/wal-0003.log
+12025-08-17 20:45:12 ERROR [IngestGateway] - Failed to parse incoming log event: unexpected end of JSON input at line 1, column 56
+2025-08-17 20:45:15 WARN  [FileWalAppender] - WAL file size exceeded limit of 100MB, rotation triggered
+2025-08-17 20:45:20 ERROR [ArchivalService] - Failed to move WAL segment to archive: java.nio.file.NoSuchFileException: /src/main/resources/WAL/ArchivedWal/wal-0003.log

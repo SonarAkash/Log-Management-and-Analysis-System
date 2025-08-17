@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 @NoArgsConstructor
 @Getter
 @Setter
+
 public class WalProperties {
     private long maxSize;
     private String activeWalPath;
