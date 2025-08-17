@@ -16,13 +16,11 @@ public class IngestController {
     }
 
     @PostMapping("api/v1/ingest")
-    public ResponseEntity<String> incomingLog(@RequestBody RawDTO log){
-        String uuid = fileWalAppender.appendLog(log);
-        if(uuid != null){
-            return ResponseEntity.ok("Success !");
-        }
-        return ResponseEntity
-                .status(HttpStatus.SERVICE_UNAVAILABLE)
-                .body("try again later !");
+    public ResponseEntity<Void> incomingLog(@RequestBody String rawLog){
+        long tenantId = 1; // Authentication Manager will provide this !
+        rawLog = tenantId + rawLog;
+        boolean result = fileWalAppender.write(rawLog);
+        return result ? ResponseEntity.status(HttpStatus.OK).build()
+                : ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
     }
 }

@@ -1,81 +1,71 @@
 package com.LogManagementSystem.LogManager.IngestGateway;
 
+import com.LogManagementSystem.LogManager.Entity.WalProperties;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.Queue;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.time.Instant;
 
 @Service
-public class FileWalAppender {
+public class FileWalAppender implements  AutoCloseable{
+    private long maxSize;
+    private long currSize;
+    private Path activeWalPath;
+    private Path archivedWalDirectoryPath;
+    private BufferedOutputStream bos;
 
-    public FileWalAppender() {
-        this.nonblockingQueue = new ConcurrentLinkedQueue<>();
-        this.activeWal = Paths.get("src/main/resources/WAL/activeWal.txt");
-        this.archivedWal = Paths.get("src/main/resources/WAL/archivedWal.txt");
+    public FileWalAppender(WalProperties pros) throws IOException {
+        this.maxSize = pros.getMaxSize();
+        this.currSize = 0L;
+        this.activeWalPath = Paths.get(pros.getActiveWalPath());
+        this.archivedWalDirectoryPath = Paths.get(pros.getArchivedWalDirectoryPath());
+        this.bos = new BufferedOutputStream(
+            Files.newOutputStream(this.activeWalPath, StandardOpenOption.CREATE
+                    , StandardOpenOption.CREATE)
+        );
     }
 
-    private final Path activeWal;
-    private final Path archivedWal;
-    Queue<String> nonblockingQueue;
-    private final long fileSizeLimit = 1_000_000_000;
-
-    public String appendLog(RawDTO log) {
-        System.out.println(log);
-        String uuid = UUID.randomUUID().toString();
-        byte[] payload = (uuid + " : " + log.log() + "\n").getBytes();
-
-        try (FileChannel fileChannel = FileChannel.open
-                (activeWal,
-                        StandardOpenOption.WRITE,
-                        StandardOpenOption.CREATE,
-                        StandardOpenOption.APPEND)) {
-
-            ByteBuffer buffer = ByteBuffer.wrap(payload);
-//            buffer.flip();
-            while(buffer.hasRemaining()){
-                int writtenBytes = fileChannel.write(buffer);
-            }
-            fileChannel.force(true);
-//            buffer.clear();
-            nonblockingQueue.offer(uuid);
-            if(Files.exists(activeWal)){
-                long size = Files.size(activeWal);
-                if(size >= fileSizeLimit){
-                    archiveWal();
-                }
-            }
-        } catch (Exception e) {
-            return null;
-//            throw new RuntimeException(e);
+    public synchronized boolean write(String log){
+        byte[] logBytes = log.getBytes();
+        if(currSize + logBytes.length >= maxSize){
+            if(!rotate()) return false;
         }
-        System.out.println(nonblockingQueue);
-        return uuid;
+        try {
+            this.bos.write(logBytes);
+            currSize += logBytes.length;
+        } catch (IOException e) {
+            return false;
+        }
+        return true;
     }
 
-    private void archiveWal(){
-        try (
-                BufferedReader reader = Files.newBufferedReader(activeWal);
-                BufferedWriter writer = Files.newBufferedWriter(archivedWal, StandardOpenOption.APPEND)
-                ) {
+    private boolean rotate() {
+        try {
+            this.bos.close();
+            String timestamp = String.valueOf(Instant.now().toEpochMilli());
+            Path newName = this.archivedWalDirectoryPath.resolve("wal-" + timestamp + ".log");
+            Files.move(activeWalPath, newName);
 
-            String currentLine;
+            bos = new BufferedOutputStream(
+                    Files.newOutputStream(this.activeWalPath, StandardOpenOption.CREATE
+                            , StandardOpenOption.CREATE)
+            );
+            currSize = 0L;
+        } catch (IOException e) {
+            return false;
+        }
+        return true;
+    }
 
-            while((currentLine = reader.readLine()) != null){
-                writer.write(currentLine);
-                writer.newLine();
-            }
-
-        } catch (Exception e) {
-            System.out.println("Failed to copy WAL");
+    @Override
+    public void close() throws Exception {
+        if(bos != null){
+            bos.flush();
+            bos.close();
         }
     }
 }
