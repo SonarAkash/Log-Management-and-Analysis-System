@@ -13,6 +13,7 @@ import java.util.UUID;
 @Table(name = "logs")
 @AllArgsConstructor @NoArgsConstructor
 @Getter @Setter
+@Data
 public class LogEvent {
 
     @Id
@@ -22,7 +23,7 @@ public class LogEvent {
     @Column(nullable = false)
     private Instant ts;
 
-    @Column(nullable = false)
+//    @Column(nullable = false)
     private String message;
 
     private String service;

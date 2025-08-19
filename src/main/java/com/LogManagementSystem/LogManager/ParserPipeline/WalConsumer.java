@@ -10,9 +10,11 @@ import java.util.concurrent.*;
 public class WalConsumer {
     private WalProducer producer;
     private ExecutorCompletionService<LogEvent> completionService;
+    private ParserDecider parserDecider;
 
-    public WalConsumer(WalProducer producer){
+    public WalConsumer(WalProducer producer, ParserDecider parserDecider){
         this.producer = producer;
+        this.parserDecider = parserDecider;
         completionService = new ExecutorCompletionService<LogEvent>(Executors.newFixedThreadPool(4));
     }
 
@@ -29,13 +31,18 @@ public class WalConsumer {
 
             // call a method that decides which parser
             // to use and returns a ready to store log
-            return new LogEvent();
+            return parserDecider.decideAndParseLog(log);
         }
     }
 
     @PostConstruct
     private void init(){
-
+        Thread startLookingForLogs = new Thread(this::lookForLogs, "Log Look up Thread");
+        Thread startStoringLogs = new Thread(this::storeLogs, "Store Log Thread");
+        startLookingForLogs.setDaemon(true);;
+        startStoringLogs.setDaemon(true);
+        startLookingForLogs.start();
+        startStoringLogs.start();
     }
 
     private void lookForLogs(){
@@ -50,10 +57,14 @@ public class WalConsumer {
         while(true){
             try {
                 Future<LogEvent> completedFuture = completionService.take();
+                System.out.println(completedFuture.get().toString());
 //              store this log later
             } catch (InterruptedException e) {
                 System.out.println("completion service was interrupted !!");
 //                throw new RuntimeException(e);
+            } catch (ExecutionException e) {
+//                throw new RuntimeException(e);
+                System.out.println("thread task was interrupted or threw exception !");
             }
         }
     }

@@ -1,6 +1,10 @@
 package com.LogManagementSystem.LogManager.ParserPipeline;
 
-import com.LogManagementSystem.LogManager.Entity.*;
+import com.LogManagementSystem.LogManager.Entity.LogEvent;
+import com.LogManagementSystem.LogManager.ParserPipeline.LogTypes.DefaultLog;
+import com.LogManagementSystem.LogManager.ParserPipeline.LogTypes.JsonParser;
+import com.LogManagementSystem.LogManager.ParserPipeline.LogTypes.Log;
+import com.LogManagementSystem.LogManager.ParserPipeline.LogTypes.LogFmtParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
 
@@ -13,10 +17,12 @@ public class ParserDecider {
 
     private ObjectMapper mapper;
     private Pattern LOGFMT_PATTERN;
-//    private Log processedLog;
+    private JsonParser jsonParser;
+    private LogFmtParser logFmtParser;
+    private DefaultLog defaultLog;
 
-    public ParserDecider(Log processedLog){
-//        this.processedLog = processedLog;
+    public ParserDecider(Log processedLog, JsonParser jsonParser
+            , LogFmtParser logFmtParser, DefaultLog defaultLog){
         mapper = new ObjectMapper();
         LOGFMT_PATTERN = Pattern.compile("[a-zA-Z_][a-zA-Z0-9_-]*=([^\\s\"]+|\"[^\"]*\")");
         /*
@@ -40,9 +46,13 @@ public class ParserDecider {
         * So this matches a quoted string.
 
          * */
+
+        this.jsonParser = jsonParser;
+        this.logFmtParser = logFmtParser;
+        this.defaultLog = defaultLog;
     }
 
-    private LogEvent decideAndParseLog(String log){
+    public LogEvent decideAndParseLog(String log){
         int start = log.indexOf("["), end = log.indexOf("]");
         UUID tenantId = UUID.fromString(log.substring(start + 1, end));
         log = log.substring(end + 1);
@@ -58,9 +68,9 @@ public class ParserDecider {
 
         String logType = determineLogType(log.trim());
         logEvent =  switch (logType){
-            case "JSON" -> new JsonLog().parse(log, logEvent);
-            case "LOGFMT" -> new LogFmtLog().parse(log, logEvent);
-            default -> new DefaultLog().parse(log, logEvent);
+            case "JSON" -> jsonParser.parse(log, logEvent);
+            case "LOGFMT" -> logFmtParser.parse(log, logEvent);
+            default -> defaultLog.parse(log, logEvent);
         };
         return logEvent;
     }

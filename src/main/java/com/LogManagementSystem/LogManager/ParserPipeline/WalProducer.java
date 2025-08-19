@@ -121,10 +121,6 @@ public class WalProducer {
         }
     }
 
-    public int getQueueSize(){
-        return queue.size();
-    }
-
     public String getLog(){
         return queue.poll();
     }
