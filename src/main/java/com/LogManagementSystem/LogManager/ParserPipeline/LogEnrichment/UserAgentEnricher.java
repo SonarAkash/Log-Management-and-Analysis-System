@@ -34,6 +34,9 @@ public class UserAgentEnricher {
             logEvent.getAttrs().put("ua_device_class", agent.getValue(UserAgent.DEVICE_CLASS)); // e.g., Desktop, Mobile, Tablet
             logEvent.getAttrs().put("ua_os_name", agent.getValue(UserAgent.OPERATING_SYSTEM_NAME)); // e.g., Windows, Android
             logEvent.getAttrs().put("ua_agent_name", agent.getValue(UserAgent.AGENT_NAME)); // e.g., Chrome, Firefox
+            System.out.println("device type : " + agent.getValue(UserAgent.DEVICE_CLASS));
+            System.out.println("os name : " + agent.getValue(UserAgent.OPERATING_SYSTEM_NAME));
+            System.out.println("agent name : " + agent.getValue(UserAgent.DEVICE_CLASS));
 
         } catch (Exception e) {
             // Again, log the error but don't let it stop the processing pipeline.

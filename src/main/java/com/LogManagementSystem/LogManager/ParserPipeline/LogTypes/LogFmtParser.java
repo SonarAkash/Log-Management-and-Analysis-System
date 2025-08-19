@@ -5,14 +5,19 @@ import com.LogManagementSystem.LogManager.ParserPipeline.BindFields;
 import com.LogManagementSystem.LogManager.ParserPipeline.LogEnrichment.LogEventEnrichment;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class LogFmtParser implements Log {
 
     private LogEventEnrichment logEventEnrichment;
     private BindFields bindFields;
+    private final Pattern LOGFMT_PATTERN =
+            Pattern.compile("([a-zA-Z0-9_\\-]+)=((\"[^\"]*\")|([^\\s]+))");
 
 
     public LogFmtParser(LogEventEnrichment logEventEnrichment, BindFields bindFields) {
@@ -23,17 +28,19 @@ public class LogFmtParser implements Log {
 
     @Override
     public LogEvent parse(String log, LogEvent logEvent) {
-        String[] logs = log.split("\\s");
         Map<String, Object> pairs = new HashMap<>();
-        for (String s : logs) {
-            if(s.trim().isEmpty()) continue;
-            int equalIdx = s.indexOf("=");
-            String key = s.substring(0, equalIdx);
-            Object value = s.substring(equalIdx + 1);
+        Matcher matcher = LOGFMT_PATTERN.matcher(log);
+        while(matcher.find()){
+            String key = matcher.group(1);
+            String value = matcher.group(2);
+            if(value.startsWith("\"") && value.endsWith("\"")){
+                value = value.substring(1, value.length() - 1);
+            }
             pairs.put(key, value);
         }
         logEvent.setAttrs(pairs);
         bindFields.bindRemainingFields(pairs, logEvent);
+
         return logEventEnrichment.enrichLog(logEvent);
     }
 }

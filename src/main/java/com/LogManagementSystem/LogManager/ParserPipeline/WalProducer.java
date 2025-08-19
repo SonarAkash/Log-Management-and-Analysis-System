@@ -91,6 +91,7 @@ public class WalProducer {
 
     private void processFile(Path file){
         try(
+
                 DataInputStream dis = new DataInputStream(
                         new BufferedInputStream(
                                 Files.newInputStream(file)
@@ -98,30 +99,40 @@ public class WalProducer {
                 )
         ) {
 
-            System.out.println("file opend");
+//            System.out.println("file opend");
             System.out.println(Thread.currentThread().getName());
+            Thread.sleep(5000);
+
             try{
                 while(true){
                     int logSize = dis.readInt();
                     byte[] log = new byte[logSize];
                     dis.readFully(log);
                     String logMessage = new String(log, StandardCharsets.UTF_8);
+                    while (queue.size() > 10000){
+                        Thread.sleep(4000);
+                    }
+
                     queue.offer(logMessage);
-                    System.out.println("queued : " + logMessage + " : " + queue.size());
+//                    System.out.println("queued : " + logMessage + " : " + queue.size());
                 }
             } catch (EOFException e){
 //              reached end of file
 //                break;
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
             }
             Files.delete(file);
-            System.out.println("file close");
+//            System.out.println("file close");
         } catch (IOException e) {
             System.out.println("failed to open the file :(");
 //            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
     }
 
-    public String getLog(){
+    public String getLog() {
         return queue.poll();
     }
 

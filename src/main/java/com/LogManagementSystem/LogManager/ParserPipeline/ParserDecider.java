@@ -3,7 +3,6 @@ package com.LogManagementSystem.LogManager.ParserPipeline;
 import com.LogManagementSystem.LogManager.Entity.LogEvent;
 import com.LogManagementSystem.LogManager.ParserPipeline.LogTypes.DefaultLog;
 import com.LogManagementSystem.LogManager.ParserPipeline.LogTypes.JsonParser;
-import com.LogManagementSystem.LogManager.ParserPipeline.LogTypes.Log;
 import com.LogManagementSystem.LogManager.ParserPipeline.LogTypes.LogFmtParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
@@ -21,7 +20,7 @@ public class ParserDecider {
     private LogFmtParser logFmtParser;
     private DefaultLog defaultLog;
 
-    public ParserDecider(Log processedLog, JsonParser jsonParser
+    public ParserDecider(JsonParser jsonParser
             , LogFmtParser logFmtParser, DefaultLog defaultLog){
         mapper = new ObjectMapper();
         LOGFMT_PATTERN = Pattern.compile("[a-zA-Z_][a-zA-Z0-9_-]*=([^\\s\"]+|\"[^\"]*\")");
@@ -53,25 +52,35 @@ public class ParserDecider {
     }
 
     public LogEvent decideAndParseLog(String log){
-        int start = log.indexOf("["), end = log.indexOf("]");
-        UUID tenantId = UUID.fromString(log.substring(start + 1, end));
-        log = log.substring(end + 1);
-        start = log.indexOf("[");
-        end = log.indexOf("]");
-        Instant timestamp = Instant.parse(log.substring(start + 1, end)); // when the log received by the controller
-        log = log.substring(end + 1); // now the log only contains raw log
         LogEvent logEvent = new LogEvent();
-        logEvent.setTenantId(tenantId);
-        logEvent.setTs(timestamp);
+
+        try{
+            int start = log.indexOf("["), end = log.indexOf("]");
+            UUID tenantId = UUID.fromString(log.substring(start + 1, end));
+            log = log.substring(end + 1);
+            start = log.indexOf("[");
+            end = log.indexOf("]");
+            Instant timestamp = Instant.parse(log.substring(start + 1, end)); // when the log received by the controller
+            log = log.substring(end + 1); // now the log only contains raw log
+            logEvent.setTenantId(tenantId);
+            logEvent.setTs(timestamp);
+        } catch (Exception e) {
+            System.out.println("something went wrong while parsing :( , method : decideAndParseLog -> " + e.getMessage());
+        }
 
         // switch case to identify the type of log i.e. Json or logfmt for now only
 
         String logType = determineLogType(log.trim());
-        logEvent =  switch (logType){
-            case "JSON" -> jsonParser.parse(log, logEvent);
-            case "LOGFMT" -> logFmtParser.parse(log, logEvent);
-            default -> defaultLog.parse(log, logEvent);
-        };
+        try {
+            logEvent =  switch (logType){
+                case "JSON" -> jsonParser.parse(log, logEvent);
+                case "LOGFMT" -> logFmtParser.parse(log, logEvent);
+                default -> defaultLog.parse(log, logEvent);
+            };
+        } catch (Exception e) {
+            System.out.println("TYPE parsing failed " + e.getMessage());
+        }
+
         return logEvent;
     }
 

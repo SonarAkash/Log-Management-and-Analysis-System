@@ -38,8 +38,6 @@ public class GeoIpEnricher {
             String city = response.getCity().getName();
 
             // Add the enriched data to the flexible 'attrs' map
-            logEvent.getAttrs().put("geoip_country", country);
-            logEvent.getAttrs().put("geoip_city", city);
 
         } catch (AddressNotFoundException e) {
             // The IP is not in the database (e.g., a private IP)

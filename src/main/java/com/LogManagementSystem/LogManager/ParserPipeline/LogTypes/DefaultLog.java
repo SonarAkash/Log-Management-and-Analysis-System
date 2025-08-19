@@ -7,17 +7,10 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 @Service
 public class DefaultLog implements Log{
-    private LogEventEnrichment logEventEnrichment;
-
-    public DefaultLog(LogEventEnrichment logEventEnrichment) {
-        this.logEventEnrichment = logEventEnrichment;
-    }
 
     @Override
     public LogEvent parse(String log, LogEvent logEvent) {
         logEvent.setMessage(log);
-        logEvent.setIngestedAt(Instant.now());
-        logEventEnrichment.enrichLog(logEvent);
         return logEvent;
     }
 }

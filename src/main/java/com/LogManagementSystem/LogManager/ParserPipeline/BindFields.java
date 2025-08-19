@@ -30,7 +30,7 @@ public class BindFields {
                 }
             } catch (NoSuchFieldException e) {
 //                throw new RuntimeException(e);
-                // if entity doesn't have this field, ignor
+                // if entity doesn't have this field, ignore
             } catch (IllegalAccessException e) {
                 // access modifier issue, ignore
 //                throw new RuntimeException(e);

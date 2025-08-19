@@ -63,6 +63,9 @@ public class FileWalAppender implements AutoCloseable{
             String timestamp = String.valueOf(Instant.now().toEpochMilli());
             Path newName = this.archivedWalDirectoryPath.resolve("wal-" + timestamp + ".log");
             Files.move(activeWalPath, newName);
+            System.out.println("file created : " + newName.toString());
+
+//            Thread.sleep(5000);
 
             dos = new DataOutputStream(new BufferedOutputStream(
                     Files.newOutputStream(this.activeWalPath, StandardOpenOption.CREATE
