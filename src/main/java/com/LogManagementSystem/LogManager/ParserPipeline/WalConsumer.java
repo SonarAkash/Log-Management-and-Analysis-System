@@ -13,11 +13,13 @@ public class WalConsumer {
     private WalProducer producer;
     private ExecutorCompletionService<LogEvent> completionService;
     private ParserDecider parserDecider;
+    private BlockingQueue<String> queue;
 
-    public WalConsumer(WalProducer producer, ParserDecider parserDecider){
+    public WalConsumer(WalProducer producer, ParserDecider parserDecider, WalProducer walProducer) throws InterruptedException {
         this.producer = producer;
         this.parserDecider = parserDecider;
         completionService = new ExecutorCompletionService<>(Executors.newFixedThreadPool(4));
+        this.queue = walProducer.getQueue();
     }
 
     class ReadLogs implements Callable<LogEvent> {
@@ -58,17 +60,26 @@ public class WalConsumer {
 
     private void lookForLogs() {
         while(true){
-            String log = producer.getLog();
-            if(log != null){
-                completionService.submit(new ReadLogs(log));
-            }else{
-                try {
-                    Thread.sleep(3000);
-                } catch (InterruptedException e) {
-//                    throw new RuntimeException(e);
-                    System.out.println("Look up thread was interrupted => cause : " + e.getMessage());
-                }
+//            String log = producer.getLog();
+//            if(log != null){
+//                completionService.submit(new ReadLogs(log));
+//            }else{
+//                try {
+//                    Thread.sleep(3000);
+//                } catch (InterruptedException e) {
+////                    throw new RuntimeException(e);
+//                    System.out.println("Look up thread was interrupted => cause : " + e.getMessage());
+//                }
+//            }
+            try {
+                String log = queue.take();
+                completionService.submit(new ReadLogs((log)));
+            } catch (InterruptedException e) {
+//                throw new RuntimeException(e);
+                Thread.currentThread().interrupt();
+                System.out.println("Consumer stopped !!");
             }
+            ;
         }
     }
     private void storeLogs(){

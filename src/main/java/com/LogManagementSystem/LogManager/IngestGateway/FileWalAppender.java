@@ -80,7 +80,7 @@ public class FileWalAppender implements AutoCloseable{
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() throws Exception { // closes the files just before the application stops
         if(dos != null){
             dos.flush();
             dos.close();

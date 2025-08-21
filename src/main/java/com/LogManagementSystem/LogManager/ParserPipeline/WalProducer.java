@@ -10,8 +10,10 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
+
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 @Service
 //@ConfigurationProperties(prefix = "wal")
@@ -20,14 +22,14 @@ public class WalProducer {
     private String archivedWalDirectoryPath;
     private Path archivedWalDirPath;
     private WatchService watchService;
-    private Queue<String> queue;
+    private BlockingQueue<String> queue;
 
     public WalProducer(WalProperties pros) throws IOException {
         this.archivedWalDirectoryPath = pros.getArchivedWalDirectoryPath();
         this.archivedWalDirPath = Paths.get(this.archivedWalDirectoryPath);
         this.watchService = FileSystems.getDefault().newWatchService();
         this.archivedWalDirPath.register(watchService, StandardWatchEventKinds.ENTRY_CREATE);
-        this.queue = new ConcurrentLinkedQueue<>();
+        this.queue = new ArrayBlockingQueue<String>(10000);
 //        start();
 //        calling the start here will be done by spring. Spring first calls constructors to initialize obj, then inject
 //        inject dependencies. Calling the start() from constructor will make main thread to loop in watch service
@@ -100,8 +102,8 @@ public class WalProducer {
         ) {
 
 //            System.out.println("file opend");
-            System.out.println(Thread.currentThread().getName());
-            Thread.sleep(5000);
+//            System.out.println(Thread.currentThread().getName());
+//            Thread.sleep(5000);
 
             try{
                 while(true){
@@ -109,17 +111,16 @@ public class WalProducer {
                     byte[] log = new byte[logSize];
                     dis.readFully(log);
                     String logMessage = new String(log, StandardCharsets.UTF_8);
-                    while (queue.size() > 10000){
-                        Thread.sleep(4000);
-                    }
 
-                    queue.offer(logMessage);
+                    queue.put(logMessage);
 //                    System.out.println("queued : " + logMessage + " : " + queue.size());
                 }
             } catch (EOFException e){
 //              reached end of file
 //                break;
             } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                System.out.println("producer interrupted !!");
                 throw new RuntimeException(e);
             }
             Files.delete(file);
@@ -127,13 +128,11 @@ public class WalProducer {
         } catch (IOException e) {
             System.out.println("failed to open the file :(");
 //            throw new RuntimeException(e);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
         }
     }
 
-    public String getLog() {
-        return queue.poll();
+    public BlockingQueue<String> getQueue() throws InterruptedException {
+        return queue;
     }
 
 }
