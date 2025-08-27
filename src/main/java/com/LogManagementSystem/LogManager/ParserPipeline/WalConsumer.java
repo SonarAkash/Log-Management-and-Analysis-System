@@ -14,12 +14,14 @@ public class WalConsumer {
     private ExecutorCompletionService<LogEvent> completionService;
     private ParserDecider parserDecider;
     private BlockingQueue<String> queue;
+    private BlockingQueue<LogEvent> logBuffer;
 
-    public WalConsumer(WalProducer producer, ParserDecider parserDecider, WalProducer walProducer) throws InterruptedException {
+    public WalConsumer(WalProducer producer, ParserDecider parserDecider, WalProducer walProducer, DatabaseWriter databaseWriter) throws InterruptedException {
         this.producer = producer;
         this.parserDecider = parserDecider;
         completionService = new ExecutorCompletionService<>(Executors.newFixedThreadPool(4));
         this.queue = walProducer.getQueue();
+        this.logBuffer = databaseWriter.getLogBuffer();
     }
 
     class ReadLogs implements Callable<LogEvent> {
@@ -79,7 +81,7 @@ public class WalConsumer {
                 Thread.currentThread().interrupt();
                 System.out.println("Consumer stopped !!");
             }
-            ;
+
         }
     }
     private void storeLogs(){
@@ -88,11 +90,13 @@ public class WalConsumer {
                 Future<LogEvent> completedFuture = completionService.take();
                 LogEvent logEvent = completedFuture.get();
                 logEvent.setIngestedAt(Instant.now());
-                System.out.println(logEvent + "\n");
+//                System.out.println(logEvent + "\n");
 //              store this log later
+                logBuffer.put(logEvent);
             } catch (InterruptedException e) {
                 System.out.println("completion service was interrupted !!\n");
 //                throw new RuntimeException(e);
+                Thread.currentThread().interrupt();
                 System.out.println(e.getMessage() + "\n");
 
             } catch (ExecutionException e) {

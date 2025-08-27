@@ -1,0 +1,61 @@
+version: '3.8' # Specifies the version of the Docker Compose file format
+
+#services:
+#  # This is the name of our service, we'll call it 'postgres'
+#  postgres:
+#    # Use the official PostgreSQL image from Docker Hub, with a specific version
+#    image: postgres:15
+#
+#    # This is the name of the running container
+#    container_name: log-manager-db
+#
+#    # Environment variables to configure the PostgreSQL container
+#    environment:
+#      POSTGRES_USER: Akash_Sonar       # The username you will use to connect
+#      POSTGRES_PASSWORD: Akash@3119   # The password for the user
+#      POSTGRES_DB: log_management      # The name of the database to create
+#
+#    # This section makes sure your data is saved even if you stop/remove the container
+#    volumes:
+#      - postgres-data:/var/lib/postgresql/data
+#
+#    # This maps a port from your local machine to the container
+#    # Format: <your-machine-port>:<container-port>
+#    # We can now connect to PostgreSQL on localhost:5432
+#    ports:
+#      - "5432:5432"
+#
+#    # Healthcheck to ensure the container is ready before it's marked as 'healthy'
+#    healthcheck:
+#      test: ["CMD-SHELL", "pg_isready -U Akash_Sonar -d log_management"]
+#      interval: 10s
+#      timeout: 5s
+#      retries: 5
+
+
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: log-manager-db
+    environment:
+      POSTGRES_USER: Akash_Sonar
+      POSTGRES_PASSWORD: Akash@3119
+      POSTGRES_DB: log_management
+      TZ: Asia/Kolkata       # Set timezone environment variable
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U Akash_Sonar -d log_management"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    command: >
+      bash -c "apt-get update && apt-get install -y tzdata && docker-entrypoint.sh postgres"
+
+
+# This defines the named volume we used above, letting Docker manage it
+volumes:
+  postgres-data:

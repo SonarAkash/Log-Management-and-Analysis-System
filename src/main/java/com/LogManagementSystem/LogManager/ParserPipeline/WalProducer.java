@@ -2,6 +2,7 @@ package com.LogManagementSystem.LogManager.ParserPipeline;
 
 import com.LogManagementSystem.LogManager.Entity.WalProperties;
 import jakarta.annotation.PostConstruct;
+import lombok.Getter;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedInputStream;
@@ -22,6 +23,7 @@ public class WalProducer {
     private String archivedWalDirectoryPath;
     private Path archivedWalDirPath;
     private WatchService watchService;
+    @Getter
     private BlockingQueue<String> queue;
 
     public WalProducer(WalProperties pros) throws IOException {
@@ -123,16 +125,12 @@ public class WalProducer {
                 System.out.println("producer interrupted !!");
                 throw new RuntimeException(e);
             }
+            System.out.println("file created : " + file.toString());
             Files.delete(file);
-//            System.out.println("file close");
         } catch (IOException e) {
             System.out.println("failed to open the file :(");
 //            throw new RuntimeException(e);
         }
-    }
-
-    public BlockingQueue<String> getQueue() throws InterruptedException {
-        return queue;
     }
 
 }
