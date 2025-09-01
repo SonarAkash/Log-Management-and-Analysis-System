@@ -1,15 +1,13 @@
 package com.LogManagementSystem.LogManager.Entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -30,4 +28,6 @@ public class Tenant {
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
+    @OneToMany(mappedBy = "tenant")
+    private List<User> users;
 }
