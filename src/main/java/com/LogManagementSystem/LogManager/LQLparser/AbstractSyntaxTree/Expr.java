@@ -3,7 +3,7 @@ package com.LogManagementSystem.LogManager.LQLparser.AbstractSyntaxTree;
 
 /**
  * Base interface for all expression nodes in the AST.
- * This uses the Visitor pattern, which allows us to add new operations
+ * This uses the Visitor pattern, which allows to add new operations
  * (like SQL generation or semantic analysis) without changing the node classes.
  * <R> The return type of the visitor's operation.
  */

@@ -8,22 +8,27 @@ import com.LogManagementSystem.LogManager.LQLparser.AbstractSyntaxTree.Literal;
 import com.LogManagementSystem.LogManager.LQLparser.AbstractSyntaxTree.Unary;
 import com.LogManagementSystem.LogManager.LQLparser.Token.Token;
 import com.LogManagementSystem.LogManager.LQLparser.Token.TokenType;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 
 /**
  * The Parser consumes a list of tokens and produces an Abstract Syntax Tree (AST).
- * It implements a recursive descent parser to handle our grammar rules and operator precedence.
+ * It implements a recursive descent parser to handle the grammar rules and operator precedence.
  */
+
+@Service
+@Scope("prototype")
 public class Parser {
 
     private static class ParseError extends RuntimeException {}
 
-    private final List<Token> tokens;
+    private List<Token> tokens;
     private int current = 0;
 
-    public Parser(List<Token> tokens) {
+    public void init(List<Token> tokens) {
         this.tokens = tokens;
     }
 
@@ -36,7 +41,7 @@ public class Parser {
         }
     }
 
-    // --- Grammar Implementation: expression -> term -> factor -> unary -> primary ---
+    //  Grammar Implementation: expression -> term -> factor -> unary -> primary
 
     // An expression is a series of terms separated by OR.
     private Expr expression() {
@@ -94,13 +99,13 @@ public class Parser {
         throw error(peek(), "Expect expression.");
     }
 
-    // --- Helper Methods ---
+    //  Helper Methods
 
     private boolean isAtPrimary() {
         if (isAtEnd()) return false;
         TokenType type = peek().type();
         // A primary can start a new implicit AND group.
-        // Importantly, it cannot be an operator like AND/OR or a closing paren.
+        // But, it cannot be an operator like (AND/OR) or a closing paren.
         return type == TokenType.BAREWORD || type == TokenType.KEY_VALUE || type == TokenType.LPAREN || type == TokenType.NOT;
     }
 
