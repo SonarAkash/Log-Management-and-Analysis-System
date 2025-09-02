@@ -125,7 +125,7 @@ public class WalProducer {
                 System.out.println("producer interrupted !!");
                 throw new RuntimeException(e);
             }
-            System.out.println("file created : " + file.toString());
+            System.out.println("file deleted : " + file.toString());
             Files.delete(file);
         } catch (IOException e) {
             System.out.println("failed to open the file :(");

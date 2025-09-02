@@ -1,5 +1,6 @@
 package com.LogManagementSystem.LogManager.IngestGateway;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,9 +26,11 @@ public class IngestController {
     }
 
     @PostMapping("api/v1/ingest")
-    public ResponseEntity<Void> incomingLog(@RequestBody String rawLog){
+    public ResponseEntity<?> incomingLog(HttpServletRequest request,
+                                            @RequestBody String rawLog){
         String timestamp = String.valueOf(Instant.now());
-        UUID tenantId =  UUID.fromString("a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11"); // Authentication Manager will provide this !
+        UUID tenantId =  (UUID) request.getAttribute("tenantId");
+//        System.out.println(request.getAttribute("tenantId"));
         rawLog = "[" + tenantId + "][" + timestamp + "]"+ rawLog;
         boolean result = fileWalAppender.write(rawLog);
         return result ? ResponseEntity.status(HttpStatus.OK).build()
