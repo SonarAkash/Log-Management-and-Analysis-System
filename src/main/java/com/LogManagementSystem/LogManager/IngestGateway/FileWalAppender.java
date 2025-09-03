@@ -24,20 +24,34 @@ public class FileWalAppender implements AutoCloseable{
     public FileWalAppender(WalProperties pros) throws IOException {
         this.maxSize = pros.getMaxSize();
         this.activeWalPath = Paths.get(pros.getActiveWalPath());
-        this.archivedWalDirectoryPath = Paths.get(pros.getArchivedWalDirectoryPath());
-        if(Files.exists(activeWalPath)){
-            currSize = Files.size(activeWalPath);
-            dos = new DataOutputStream(new BufferedOutputStream(
-                    new FileOutputStream(pros.getActiveWalPath(), true)
-            ));
-        }else{
-            currSize = 0L;
-            dos = new DataOutputStream(new BufferedOutputStream(
-                    Files.newOutputStream(this.activeWalPath, StandardOpenOption.CREATE
-                            , StandardOpenOption.APPEND)
-            ));
+        Path parentDir = activeWalPath.getParent();
+        if (parentDir != null && !Files.exists(parentDir)) {
+            Files.createDirectories(parentDir);
         }
+        this.archivedWalDirectoryPath = Paths.get(pros.getArchivedWalDirectoryPath());
+        if (!Files.exists(archivedWalDirectoryPath)){
+            Files.createDirectories(archivedWalDirectoryPath);
+        }
+//        if(Files.exists(activeWalPath)){
+//            currSize = Files.size(activeWalPath);
+//            dos = new DataOutputStream(new BufferedOutputStream(
+//                    new FileOutputStream(pros.getActiveWalPath(), true)
+//            ));
+//        }else{
+//            currSize = 0L;
+//            dos = new DataOutputStream(new BufferedOutputStream(
+//                    Files.newOutputStream(this.activeWalPath, StandardOpenOption.CREATE
+//                            , StandardOpenOption.APPEND)
+//            ));
+//        }
 
+        // The above comment code does the same thing as below code but
+        // for consistence i found this new way of doing the same thing
+        // it looks good
+        currSize = Files.exists(activeWalPath) ? Files.size(activeWalPath) : 0L;
+        dos = new DataOutputStream(new BufferedOutputStream(
+                Files.newOutputStream(activeWalPath, StandardOpenOption.CREATE, StandardOpenOption.APPEND)
+        ));
     }
 
     public synchronized boolean write(String log){
