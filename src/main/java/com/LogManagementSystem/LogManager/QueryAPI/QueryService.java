@@ -46,7 +46,7 @@ public class QueryService {
     public Page<LogEvent> getLogs(int offset, int size, String query, UUID tenant_id){
         Pageable pageable = PageRequest.of(offset, size);
         List<Token> tokens = tokenizer.scanTokens(query);
-        System.out.println(tokens);
+//        System.out.println(tokens);
         Parser parser = provider.getObject();
         parser.init(tokens);
         Expr expr = parser.parse();
@@ -54,17 +54,17 @@ public class QueryService {
             semanticAnalyzer.analyze(expr);
             SqlQuery sqlQuery = sqlGenerator.generate(expr, tenant_id);
             String countSql = "SELECT count(*) FROM logs WHERE " + sqlQuery.query();
-            System.out.println(countSql);
-            System.out.println(sqlQuery.parameters());
-            System.out.println();
+//            System.out.println(countSql);
+//            System.out.println(sqlQuery.parameters());
+//            System.out.println();
            Query countQuery = entityManager.createNativeQuery(countSql);
             for(int i=0; i<sqlQuery.parameters().size(); i++){
                 countQuery.setParameter(i + 1, sqlQuery.parameters().get(i));
             }
             long totalResults = ((Number) countQuery.getSingleResult()).longValue();
             String dataSql = "SELECT * FROM logs WHERE " + sqlQuery.query() + " ORDER BY ts DESC";
-            System.out.println(dataSql);
-            System.out.println(sqlQuery.parameters());
+//            System.out.println(dataSql);
+//            System.out.println(sqlQuery.parameters());
             Query dataQuery = entityManager.createNativeQuery(dataSql, LogEvent.class);
             for (int i = 0; i < sqlQuery.parameters().size(); i++) {
                 dataQuery.setParameter(i + 1, sqlQuery.parameters().get(i));

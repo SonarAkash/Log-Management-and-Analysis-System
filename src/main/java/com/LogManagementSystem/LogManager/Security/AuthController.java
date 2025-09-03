@@ -2,6 +2,7 @@ package com.LogManagementSystem.LogManager.Security;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -47,9 +48,9 @@ public class AuthController {
                     .build());
         } catch (Exception e) {
             return ResponseEntity.
-                    status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    status(HttpStatus.UNAUTHORIZED)
                     .body(AuthenticationResponse.builder()
-                            .error("Error logging in, please try again later ! " + e)
+                            .error("Unauthorized access ! ")
                             .build());
         }
 

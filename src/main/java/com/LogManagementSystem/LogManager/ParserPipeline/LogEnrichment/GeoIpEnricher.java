@@ -37,11 +37,12 @@ public class GeoIpEnricher {
             String country = response.getCountry().getName();
             String city = response.getCity().getName();
 
-            // Add the enriched data to the flexible 'attrs' map
+
+            logEvent.getAttrs().put("country", country);
+            logEvent.getAttrs().put("city", city);
 
         } catch (AddressNotFoundException e) {
-            // The IP is not in the database (e.g., a private IP)
-            //  ignoring it.
+           // address not present in db
         } catch (Exception e) {
 
             System.err.println("GeoIP enrichment failed for IP: " + logEvent.getClientIp() + " Error: " + e.getMessage());
