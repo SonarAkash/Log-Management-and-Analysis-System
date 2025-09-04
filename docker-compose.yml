@@ -1,40 +1,7 @@
 version: '3.8' # Specifies the version of the Docker Compose file format
 
-#services:
-#  # This is the name of our service, we'll call it 'postgres'
-#  postgres:
-#    # Use the official PostgreSQL image from Docker Hub, with a specific version
-#    image: postgres:15
-#
-#    # This is the name of the running container
-#    container_name: log-manager-db
-#
-#    # Environment variables to configure the PostgreSQL container
-#    environment:
-#      POSTGRES_USER: Akash_Sonar       # The username you will use to connect
-#      POSTGRES_PASSWORD: Akash@3119   # The password for the user
-#      POSTGRES_DB: log_management      # The name of the database to create
-#
-#    # This section makes sure your data is saved even if you stop/remove the container
-#    volumes:
-#      - postgres-data:/var/lib/postgresql/data
-#
-#    # This maps a port from your local machine to the container
-#    # Format: <your-machine-port>:<container-port>
-#    # We can now connect to PostgreSQL on localhost:5432
-#    ports:
-#      - "5432:5432"
-#
-#    # Healthcheck to ensure the container is ready before it's marked as 'healthy'
-#    healthcheck:
-#      test: ["CMD-SHELL", "pg_isready -U Akash_Sonar -d log_management"]
-#      interval: 10s
-#      timeout: 5s
-#      retries: 5
-
-
-
 services:
+
   postgres:
     image: postgres:15
     container_name: log-manager-db
@@ -55,7 +22,45 @@ services:
     command: >
       bash -c "apt-get update && apt-get install -y tzdata && docker-entrypoint.sh postgres"
 
+    # 2.Log Management Application Service
+  log-service:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/log_management
+      - SPRING_DATASOURCE_USERNAME=Akash_Sonar
+      - SPRING_DATASOURCE_PASSWORD=Akash@3119
+      - LOG_INGESTION_WAL_PATH=/app/data/wal/
+      - LOG_MANAGER_SECURE_KEY=NWUgZGUgZDcgODcgMjcgZTUgMDEgMzQgZjYgOTggZjAgZTkgMmIgYTIgYjMgMzkgCjYzIGUyIDI1IDFiIGY1IDU5IDc4IGRkIDhkIGQwIGJhIDg0IDIwIDFkIDRlIGQ3IAo0ZiA3MiBmNyBlOSAyYSA2YiA3YiAyOCBmNSA2NiA5ZiA1NiBlNiA1ZiAzYSAyNyA=
+      - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=health
+    volumes:
+      - ./target/wal:/app/data/wal
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/actuator/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
-# This defines the named volume we used above, letting Docker manage it
+  # 3. The k6 Load Testing Service
+  k6:
+    image: grafana/k6
+    command: run /scripts/test.js
+    volumes:
+      - ./k6:/scripts
+    environment:
+      - API_TARGET=http://log-service:8080
+      - API_TOKEN=8g7HVTEyueAWIOjF6dwS2lBCE3cuAyOmTbhSmmkUQP4
+    depends_on:
+      log-service:
+        condition: service_healthy
+
+
+# This defines the named volume used above, letting Docker manage it
 volumes:
   postgres-data:

@@ -83,7 +83,7 @@ public class FileWalAppender implements AutoCloseable{
 
             dos = new DataOutputStream(new BufferedOutputStream(
                     Files.newOutputStream(this.activeWalPath, StandardOpenOption.CREATE
-                            , StandardOpenOption.CREATE)
+                            , StandardOpenOption.TRUNCATE_EXISTING)
             ));
             currSize = 0L;
         } catch (IOException e) {

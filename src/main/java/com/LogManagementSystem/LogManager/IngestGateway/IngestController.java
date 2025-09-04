@@ -20,10 +20,10 @@ public class IngestController {
         this.fileWalAppender = fileWalAppender;
     }
 
-    @GetMapping("actuator/health")
-    public String hello(){
-        return "Hello !";
-    }
+//    @GetMapping("actuator/health")
+//    public String hello(){
+//        return "Hello !";
+//    }
 
     @PostMapping("api/v1/ingest")
     public ResponseEntity<?> incomingLog(HttpServletRequest request,
@@ -33,7 +33,7 @@ public class IngestController {
 //        System.out.println(request.getAttribute("tenantId"));
         rawLog = "[" + tenantId + "][" + timestamp + "]"+ rawLog;
         boolean result = fileWalAppender.write(rawLog);
-        return result ? ResponseEntity.status(HttpStatus.OK).build()
+        return result ? ResponseEntity.accepted().build()
                 : ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
     }
 }

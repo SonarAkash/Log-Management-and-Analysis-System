@@ -3,6 +3,7 @@ package com.LogManagementSystem.LogManager.ParserPipeline;
 import com.LogManagementSystem.LogManager.Entity.WalProperties;
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedInputStream;
@@ -20,17 +21,23 @@ import java.util.concurrent.LinkedBlockingQueue;
 //@ConfigurationProperties(prefix = "wal")
 public class WalProducer {
 
-    private String archivedWalDirectoryPath;
+//    private String archivedWalDirectoryPath;
     private Path archivedWalDirPath;
-    private WatchService watchService;
+//    private WatchService watchService;
     @Getter
     private BlockingQueue<String> queue;
 
+    @Autowired
     public WalProducer(WalProperties pros) throws IOException {
-        this.archivedWalDirectoryPath = pros.getArchivedWalDirectoryPath();
-        this.archivedWalDirPath = Paths.get(this.archivedWalDirectoryPath);
-        this.watchService = FileSystems.getDefault().newWatchService();
-        this.archivedWalDirPath.register(watchService, StandardWatchEventKinds.ENTRY_CREATE);
+        System.out.println("producer init");
+//        this.archivedWalDirectoryPath = pros.getArchivedWalDirectoryPath();
+        this.archivedWalDirPath = Paths.get(pros.getArchivedWalDirectoryPath());
+        if (!Files.exists(archivedWalDirPath)){
+            Files.createDirectories(archivedWalDirPath);
+            System.out.println("successfully created " + archivedWalDirPath.toString());
+        }
+//        this.watchService = FileSystems.getDefault().newWatchService();
+//        this.archivedWalDirPath.register(watchService, StandardWatchEventKinds.ENTRY_CREATE);
         this.queue = new ArrayBlockingQueue<String>(10000);
 //        start();
 //        calling the start here will be done by spring. Spring first calls constructors to initialize obj, then inject
@@ -51,34 +58,54 @@ public class WalProducer {
     }
 
     private void processNewFilesContinuously() {
-        while(true){
-            WatchKey key;
+
+        System.out.println("Starting WAL Polling thread...");
+        while (true) {
+            try (DirectoryStream<Path> stream = Files.newDirectoryStream(archivedWalDirPath)) {
+
+                for (Path file : stream) {
+                    processFile(file);
+                }
+            } catch (IOException e) {
+                System.err.println("Error polling directory: " + e.getMessage());
+            }
+
             try {
-                key = watchService.take();
+                Thread.sleep(100); // Poll every 100ms
             } catch (InterruptedException e) {
-                System.out.println("Monitoring was interrupted !!");
+                System.out.println("Polling was interrupted !!");
                 Thread.currentThread().interrupt();
                 return;
             }
-            for(WatchEvent<?> event : key.pollEvents()){
-                WatchEvent.Kind<?> kind = event.kind();
-                if(kind == StandardWatchEventKinds.ENTRY_CREATE){
-                    @SuppressWarnings("unchecked")
-                    WatchEvent<Path> ev = (WatchEvent<Path>) event;
-                    Path fileName = ev.context();
-
-                    Path filePath = archivedWalDirPath.resolve(fileName);
-                    processFile(filePath);
-                }
-            }
-
-            boolean valid = key.reset();
-            if (!valid) {
-                System.err.println("Directory is no longer accessible. Stopping monitor.");
-                break;
-            }
-
         }
+//        while(true){
+//            WatchKey key;
+//            try {
+//                key = watchService.take();
+//            } catch (InterruptedException e) {
+//                System.out.println("Monitoring was interrupted !!");
+//                Thread.currentThread().interrupt();
+//                return;
+//            }
+//            for(WatchEvent<?> event : key.pollEvents()){
+//                WatchEvent.Kind<?> kind = event.kind();
+//                if(kind == StandardWatchEventKinds.ENTRY_CREATE){
+//                    @SuppressWarnings("unchecked")
+//                    WatchEvent<Path> ev = (WatchEvent<Path>) event;
+//                    Path fileName = ev.context();
+//                    System.out.println("processing files");
+//                    Path filePath = archivedWalDirPath.resolve(fileName);
+//                    processFile(filePath);
+//                }
+//            }
+//
+//            boolean valid = key.reset();
+//            if (!valid) {
+//                System.err.println("Directory is no longer accessible. Stopping monitor.");
+//                break;
+//            }
+//
+//        }
     }
 
     private void processExistingFiles() {
@@ -122,8 +149,8 @@ public class WalProducer {
 //                break;
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
-                System.out.println("producer interrupted !!");
-                throw new RuntimeException(e);
+                System.err.println("producer interrupted !!");
+//                throw new RuntimeException(e);
             }
             System.out.println("file deleted : " + file.toString());
             Files.delete(file);
