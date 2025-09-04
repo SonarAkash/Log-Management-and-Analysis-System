@@ -4,6 +4,7 @@ import com.LogManagementSystem.LogManager.Entity.LogEvent;
 import com.LogManagementSystem.LogManager.ParserPipeline.LogTypes.DefaultLog;
 import com.LogManagementSystem.LogManager.ParserPipeline.LogTypes.JsonParser;
 import com.LogManagementSystem.LogManager.ParserPipeline.LogTypes.LogFmtParser;
+import com.LogManagementSystem.LogManager.ParserPipeline.LogTypes.LogType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
 
@@ -70,11 +71,11 @@ public class ParserDecider {
 
         // switch case to identify the type of log i.e. Json or logfmt for now only
 
-        String logType = determineLogType(log.trim());
+        LogType logType = determineLogType(log.trim());
         try {
             logEvent =  switch (logType){
-                case "JSON" -> jsonParser.parse(log, logEvent);
-                case "LOGFMT" -> logFmtParser.parse(log, logEvent);
+                case LogType.JSON -> jsonParser.parse(log, logEvent);
+                case LogType.LOGFMT -> logFmtParser.parse(log, logEvent);
                 default -> defaultLog.parse(log, logEvent);
             };
         } catch (Exception e) {
@@ -84,20 +85,20 @@ public class ParserDecider {
         return logEvent;
     }
 
-    private String determineLogType(String log) {
+    public LogType determineLogType(String log) {
         return checkJSON(log);
     }
 
-    private String checkJSON(String log) {
+    private LogType checkJSON(String log) {
         try {
             mapper.readTree(log);
-            return "JSON";
+            return LogType.JSON;
         } catch (Exception e) {
             return checkLogfmt(log);
         }
     }
 
-    private String checkLogfmt(String log) {
-        return LOGFMT_PATTERN.matcher(log).find() ? "LOGFMT" : "DEFAULT";
+    private LogType checkLogfmt(String log) {
+        return LOGFMT_PATTERN.matcher(log).find() ? LogType.LOGFMT : LogType.DEFAULT;
     }
 }

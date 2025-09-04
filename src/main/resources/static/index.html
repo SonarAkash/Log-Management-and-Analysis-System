@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Log Stream</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+</head>
+<body>
+
+<div id="login-view" class="view">
+    <div class="form-container">
+        <h2>Log In</h2>
+        <form id="login-form">
+            <input type="email" id="login-email" placeholder="Email" required>
+            <input type="password" id="login-password" placeholder="Password" required>
+            <button type="submit">Login</button>
+        </form>
+        <p>Don't have an account? <a href="#" id="show-signup">Sign Up</a></p>
+    </div>
+</div>
+
+<div id="signup-view" class="view" style="display: none;">
+    <div class="form-container">
+        <h2>Create Account</h2>
+        <form id="signup-form">
+            <input type="email" id="signup-email" placeholder="Email" required>
+            <input type="password" id="signup-password" placeholder="Password" required>
+            <input type="text" id="signup-company" placeholder="Company Name" required>
+            <button type="submit">Create Account</button>
+        </form>
+        <p>Already have an account? <a href="#" id="show-login">Log In</a></p>
+    </div>
+</div>
+
+<div id="log-view" class="view" style="display: none;">
+    <header>
+        <h1>Live Log Stream</h1>
+        <div id="connection-status" class="status-disconnected">Disconnected</div>
+        <button id="logout-button">Logout</button>
+    </header>
+    <div id="log-container">
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

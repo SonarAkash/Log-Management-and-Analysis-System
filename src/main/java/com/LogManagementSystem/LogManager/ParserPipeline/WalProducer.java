@@ -15,10 +15,8 @@ import java.nio.file.*;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 @Service
-//@ConfigurationProperties(prefix = "wal")
 public class WalProducer {
 
 //    private String archivedWalDirectoryPath;
@@ -51,7 +49,6 @@ public class WalProducer {
     public void start(){
         Thread readPendingLog = new Thread(this::processExistingFiles, "Pending Log Reader thread");
         readPendingLog.start();
-//        processExistingFiles();
         Thread walWatcherThread = new Thread(this::processNewFilesContinuously, "walWatcherThread");
         walWatcherThread.setDaemon(true);
         walWatcherThread.start();
@@ -130,10 +127,6 @@ public class WalProducer {
                 )
         ) {
 
-//            System.out.println("file opend");
-//            System.out.println(Thread.currentThread().getName());
-//            Thread.sleep(5000);
-
             try{
                 while(true){
                     int logSize = dis.readInt();
@@ -142,7 +135,6 @@ public class WalProducer {
                     String logMessage = new String(log, StandardCharsets.UTF_8);
 
                     queue.put(logMessage);
-//                    System.out.println("queued : " + logMessage + " : " + queue.size());
                 }
             } catch (EOFException e){
 //              reached end of file
@@ -150,13 +142,11 @@ public class WalProducer {
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 System.err.println("producer interrupted !!");
-//                throw new RuntimeException(e);
             }
             System.out.println("file deleted : " + file.toString());
             Files.delete(file);
         } catch (IOException e) {
             System.out.println("failed to open the file :(");
-//            throw new RuntimeException(e);
         }
     }
 

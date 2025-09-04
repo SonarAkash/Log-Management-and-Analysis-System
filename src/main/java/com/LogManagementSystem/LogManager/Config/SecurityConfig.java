@@ -36,7 +36,14 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/auth/**", "/public", "/actuator/**").permitAll()
+                        .requestMatchers("/auth/**", "/public", "/actuator/**", "/",  "/",
+                                "/*.html",
+                                "/*.css",
+                                "/*.js",
+                                "/favicon.ico",
+                                "/websocket-connect/**" ).permitAll()
+                        //only temporary
+//                        .requestMatchers("/subscribe-stream").authenticated()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

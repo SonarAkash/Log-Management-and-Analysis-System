@@ -43,10 +43,12 @@ public class AuthController {
             );
             final var user = userDetailsService.loadUserByUsername(request.getEmail());
             final var jwt = jwtService.generateToken(user);
+            System.out.println("Found user");
             return ResponseEntity.ok(AuthenticationResponse.builder()
                     .token(jwt)
                     .build());
         } catch (Exception e) {
+            System.err.println("user not found");
             return ResponseEntity.
                     status(HttpStatus.UNAUTHORIZED)
                     .body(AuthenticationResponse.builder()
