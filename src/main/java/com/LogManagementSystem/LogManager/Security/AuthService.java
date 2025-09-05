@@ -27,8 +27,10 @@ public class AuthService {
     private final TenantRepository tenantRepository;
 
     public AuthenticationResponse register(RegisterRequest request){
+        final boolean[] companyExits = {true};
         Tenant tenant = tenantRepository.findByCompanyName(request.getCompanyName())
                 .orElseGet(() -> {
+                    companyExits[0] = false;
                     UUID uuid = UUID.randomUUID();
                     Tenant newTenant = Tenant.builder()
                             .id(uuid)
@@ -41,8 +43,7 @@ public class AuthService {
         var user = User.builder()
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-//                .role(Role.ADMIN)
-                .role(tenantRepository.existsByCompanyName(request.getCompanyName()) ? Role.ADMIN : Role.USER)
+                .role(!companyExits[0] ? Role.ADMIN : Role.USER)
                 .tenant(tenant)
                 .createdAt(Instant.now())
                 .build();

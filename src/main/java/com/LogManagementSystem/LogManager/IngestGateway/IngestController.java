@@ -1,5 +1,6 @@
 package com.LogManagementSystem.LogManager.IngestGateway;
 
+import com.LogManagementSystem.LogManager.Entity.User;
 import com.LogManagementSystem.LogManager.LogStream.ActiveClient;
 import com.LogManagementSystem.LogManager.LogStream.LogMessage;
 import com.LogManagementSystem.LogManager.ParserPipeline.ParserDecider;
@@ -8,6 +9,8 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -48,6 +51,27 @@ public class IngestController {
         boolean result = fileWalAppender.write(rawLog);
         return result ? ResponseEntity.accepted().build()
                 : ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
+    }
+
+
+    @GetMapping("/test-ws")
+    public ResponseEntity<String> sendTestMessage(Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated.");
+        }
+
+        // Get the details of the currently logged-in user
+        String userEmail = authentication.getName();
+        User userDetails = (User) authentication.getPrincipal();
+
+        // Construct the same destination your UI is subscribed to
+        String destination = "/queue/stream/";
+        String payload = "{\"type\":\"TEST\", \"payload\":\"This is a direct test message sent at " + Instant.now() + "\"}";
+
+        System.out.println(">>> Sending TEST message from controller to: " + destination);
+        template.convertAndSend(destination, payload);
+
+        return ResponseEntity.ok("Test message sent to user: " + userEmail);
     }
 
     class StreamLogs implements Runnable{

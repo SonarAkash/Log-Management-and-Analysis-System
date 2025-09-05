@@ -3,16 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Log Stream</title>
+    <title>Log Manager - Live Stream</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
 </head>
 <body>
-
 <div id="login-view" class="view">
     <div class="form-container">
-        <h2>Log In</h2>
+        <h2>Log Manager</h2>
         <form id="login-form">
             <input type="email" id="login-email" placeholder="Email" required>
             <input type="password" id="login-password" placeholder="Password" required>
@@ -36,15 +33,26 @@
 </div>
 
 <div id="log-view" class="view" style="display: none;">
-    <header>
-        <h1>Live Log Stream</h1>
-        <div id="connection-status" class="status-disconnected">Disconnected</div>
-        <button id="logout-button">Logout</button>
+    <header class="main-header">
+        <div class="logo">Log Manager</div>
+        <div class="toolbar">
+            <div id="connection-status">Connecting...</div>
+            <input type="text" id="filter-input" placeholder="Filter logs...">
+            <label class="toggle-switch">
+                <input type="checkbox" id="autoscroll-toggle" checked>
+                <span class="slider"></span>
+                Auto-Scroll
+            </label>
+            <button id="clear-button" class="tool-button">Clear</button>
+            <button id="logout-button" class="tool-button">Logout</button>
+        </div>
     </header>
-    <div id="log-container">
-    </div>
+    <main id="log-container">
+    </main>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7/bundles/stomp.umd.min.js"></script>
 <script src="script.js"></script>
 </body>
 </html>

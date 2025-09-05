@@ -1,5 +1,6 @@
 package com.LogManagementSystem.LogManager.Security;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -22,10 +23,11 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/register")
-    public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request){
+    public ResponseEntity<AuthenticationResponse> register(@Valid @RequestBody RegisterRequest request){
         try {
             return ResponseEntity.ok(authService.register(request));
         } catch (Exception e) {
+            System.err.println("Registration failed : " + e.getMessage());
             return ResponseEntity.
                     status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(AuthenticationResponse.builder()

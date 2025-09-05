@@ -14,7 +14,6 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.scheduling.TaskScheduler;
-import org.springframework.scheduling.concurrent.DefaultManagedTaskScheduler;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,6 +21,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
+import org.springframework.web.socket.config.annotation.WebSocketTransportRegistration;
 
 @Configuration
 @EnableWebSocketMessageBroker
@@ -36,8 +36,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void configureMessageBroker(MessageBrokerRegistry registry){
 
         registry.enableSimpleBroker("/queue/stream")
-                .setTaskScheduler(messageBrokerTaskScheduler())
-                .setHeartbeatValue(new long[]{10000, 10000});
+                .setTaskScheduler(messageBrokerTaskScheduler());
+//                .setHeartbeatValue(new long[]{10000, 10000});
 
         registry.setUserDestinationPrefix("/user");
 
@@ -58,6 +58,18 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         return scheduler;
     }
 
+    /**
+     *
+     *
+     * This below method might look obsolete because anyway jwt filter is already authenticating
+     *      any user, but the problem is when user is authenticated by jwt filter the PRINCIPAL
+     *      object is not transferred to websocket protocol automatically. Since websocket is stateful
+     *      and http is stateless, the jwt filter don't have any knowledge of things happening in websocket
+     *      protocol (http was upgraded to socket later). So in order to authenticate user and save their
+     *      Principal object for websocket session, the below method is required for that purpose.
+     *      This is needed otherwise the system closes the session for some
+     *      reason which I don't know.
+     */
 
     @Override
     public void configureClientInboundChannel(ChannelRegistration registration) {
@@ -90,5 +102,20 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 return message;
             }
         });
+    }
+
+    /**
+     * This part is the needed for better performance, it increases the size of message
+     * that client can send. If client send a message which exceed the capacity then
+     * server will close the connection. So these changes are necessary.
+     */
+    @Override
+    public void configureWebSocketTransport(WebSocketTransportRegistration registration) {
+        // Increase the maximum allowed message size to 256KB (default is 64KB)
+        registration.setMessageSizeLimit(256 * 1024);
+
+        // Increase other related buffer limits for better performance under load
+        registration.setSendBufferSizeLimit(1024 * 1024); // 1MB
+        registration.setSendTimeLimit(20000); // 20 seconds
     }
 }

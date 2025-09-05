@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Search Logs</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="search-style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/litepicker/dist/css/litepicker.css"/>
+</head>
+<body class="search-body">
+
+<header class="main-header">
+  <div class="logo">Log Manager</div>
+  <nav>
+    <a href="index.html">Live Tail</a>
+    <a href="search.html" class="active">Search</a>
+  </nav>
+  <div class="user-controls">
+    <button id="logout-button" class="tool-button">Logout</button>
+  </div>
+</header>
+
+<div class="search-toolbar">
+  <input type="text" id="daterange-input" placeholder="Select date range...">
+  <div class="search-bar">
+    <input type="text" id="lsql-input" placeholder="Enter LSQL query (e.g., level:ERROR payment failed)">
+    <button id="search-button">Search</button>
+  </div>
+</div>
+
+<main id="results-container">
+  <div id="initial-state" class="state-message">
+    <h2>Search Your Logs</h2>
+    <p>Use the search bar above to find logs by keyword, filter by level, service, and more.</p>
+  </div>
+
+  <div id="loading-spinner" class="state-message hidden">
+    <div class="spinner"></div>
+    <p>Searching...</p>
+  </div>
+
+  <div id="empty-state" class="state-message hidden">
+    <h2>No Logs Found</h2>
+    <p>Your query did not match any logs. Try broadening your search.</p>
+  </div>
+
+</main>
+
+<footer id="pagination-controls" class="hidden">
+  <button id="prev-button" disabled>Previous</button>
+  <span id="page-info"></span>
+  <button id="next-button" disabled>Next</button>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/litepicker/dist/bundle.js"></script>
+<script src="search.js"></script>
+</body>
+</html>
