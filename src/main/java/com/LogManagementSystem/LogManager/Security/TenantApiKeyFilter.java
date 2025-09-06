@@ -9,7 +9,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,7 +22,6 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-//@Order(1)
 public class TenantApiKeyFilter extends OncePerRequestFilter {
 
     private final TenantRepository tenantRepository;
@@ -64,6 +62,16 @@ public class TenantApiKeyFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request){
-        return !request.getServletPath().startsWith("/api/v1/ingest");
+        String path = request.getServletPath();
+        if(path.startsWith("/websocket-connect") ||
+                path.startsWith("/actuator") ||
+                path.equals("/") ||
+                path.endsWith(".html") ||
+                path.endsWith(".css") ||
+                path.endsWith(".js") ||
+                path.endsWith(".ico")){
+            return true;
+        }
+        return !path.startsWith("/api/v1/ingest");
     }
 }

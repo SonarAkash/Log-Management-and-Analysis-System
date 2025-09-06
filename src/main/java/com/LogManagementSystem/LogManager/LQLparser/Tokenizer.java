@@ -2,13 +2,11 @@ package com.LogManagementSystem.LogManager.LQLparser;
 
 
 import com.LogManagementSystem.LogManager.LQLparser.Token.*;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**

@@ -19,7 +19,6 @@ public class UserAgentEnricher {
     }
 
     public void enrich(LogEvent logEvent) {
-        // The User-Agent is usually in the flexible attributes map
         Object userAgentStringObj = logEvent.getAttrs().get("http_user_agent");
 
         if (userAgentStringObj == null || !(userAgentStringObj instanceof String)) {
@@ -30,16 +29,15 @@ public class UserAgentEnricher {
             String userAgentString = (String) userAgentStringObj;
             UserAgent agent = analyzer.parse(userAgentString);
 
-            // Add the useful parsed fields back into the attributes map
             logEvent.getAttrs().put("ua_device_class", agent.getValue(UserAgent.DEVICE_CLASS)); // e.g., Desktop, Mobile, Tablet
             logEvent.getAttrs().put("ua_os_name", agent.getValue(UserAgent.OPERATING_SYSTEM_NAME)); // e.g., Windows, Android
             logEvent.getAttrs().put("ua_agent_name", agent.getValue(UserAgent.AGENT_NAME)); // e.g., Chrome, Firefox
-            System.out.println("device type : " + agent.getValue(UserAgent.DEVICE_CLASS));
-            System.out.println("os name : " + agent.getValue(UserAgent.OPERATING_SYSTEM_NAME));
-            System.out.println("agent name : " + agent.getValue(UserAgent.DEVICE_CLASS));
+//            System.out.println("device type : " + agent.getValue(UserAgent.DEVICE_CLASS));
+//            System.out.println("os name : " + agent.getValue(UserAgent.OPERATING_SYSTEM_NAME));
+//            System.out.println("agent name : " + agent.getValue(UserAgent.DEVICE_CLASS));
 
         } catch (Exception e) {
-            // Again, log the error but don't let it stop the processing pipeline.
+            // Again, loging the error but not letting it stop the processing pipeline.
             System.err.println("User-Agent parsing failed. Error: " + e.getMessage());
         }
     }

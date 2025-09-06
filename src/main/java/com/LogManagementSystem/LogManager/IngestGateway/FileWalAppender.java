@@ -65,7 +65,7 @@ public class FileWalAppender implements AutoCloseable{
             this.dos.write(logBytes);
             currSize += size;
         } catch (IOException e) {
-            System.out.println("Writing Failed !!");
+            System.err.println("Writing Failed !!");
             return false;
         }
         return true;
@@ -87,7 +87,7 @@ public class FileWalAppender implements AutoCloseable{
             ));
             currSize = 0L;
         } catch (IOException e) {
-            System.out.println("Rotating Failed !!");
+            System.err.println("Rotating Failed !!");
             return false;
         }
         return true;

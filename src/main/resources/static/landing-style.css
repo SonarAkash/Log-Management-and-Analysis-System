@@ -1,0 +1,130 @@
+.main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 5%;
+    background: rgba(18, 18, 18, 0.8);
+    backdrop-filter: blur(10px);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.logo {
+    font-size: 28px;
+    font-weight: bold;
+    color: var(--accent-primary);
+}
+
+.nav-button {
+    background: none;
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: 10px;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+.nav-button:hover {
+    background-color: var(--bg-medium);
+}
+.nav-button-primary {
+    background-color: var(--accent-primary);
+    border-color: var(--accent-primary);
+    color: var(--bg-darkest);
+}
+
+.hero {
+    text-align: center;
+    padding: 120px 20px;
+    background: linear-gradient(rgba(18,18,18,0.7), rgba(18,18,18,1)), url('https://www.transparenttextures.com/patterns/clean-gray-paper.png');
+    border-bottom: 1px solid var(--border-color);
+}
+.hero-content h1 {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    max-width: 800px;
+    margin: 0 auto 20px auto;
+}
+.hero-content p {
+    font-size: 1.2rem;
+    max-width: 600px;
+    margin: 0 auto 30px auto;
+    color: var(--text-secondary);
+}
+.cta-button {
+    background-color: var(--accent-primary);
+    border: none;
+    color: var(--bg-darkest);
+    padding: 15px 30px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: transform 0.2s;
+}
+.cta-button:hover {
+    transform: scale(1.05);
+}
+
+.features, .how-it-works {
+    padding: 80px 5%;
+    text-align: center;
+    background-color: var(--bg-dark);
+}
+.how-it-works {
+    background-color: var(--bg-darkest);
+}
+h2 {
+    font-size: 2.5rem;
+    margin-bottom: 50px;
+}
+.feature-cards, .steps {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+.card, .step {
+    background-color: var(--bg-darkest);
+    padding: 40px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    max-width: 350px;
+}
+.card .icon-placeholder {
+    font-size: 3rem;
+    margin-bottom: 20px;
+}
+.card h3, .step h3 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    color: var(--text-primary);
+}
+.card p, .step p {
+    color: var(--text-secondary);
+}
+.step span {
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    border-radius: 50%;
+    background-color: var(--accent-primary);
+    color: var(--bg-darkest);
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.main-footer {
+    text-align: center;
+    padding: 40px 20px;
+    background-color: var(--bg-dark);
+    border-top: 1px solid var(--border-color);
+    color: var(--text-secondary);
+}

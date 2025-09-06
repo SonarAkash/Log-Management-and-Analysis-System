@@ -1,58 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Log Manager - Live Stream</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LogFlux - Effortless Log Management</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="landing-style.css">
 </head>
 <body>
-<div id="login-view" class="view">
-    <div class="form-container">
-        <h2>Log Manager</h2>
-        <form id="login-form">
-            <input type="email" id="login-email" placeholder="Email" required>
-            <input type="password" id="login-password" placeholder="Password" required>
-            <button type="submit">Login</button>
-        </form>
-        <p>Don't have an account? <a href="#" id="show-signup">Sign Up</a></p>
+<header class="main-header">
+  <div class="logo">LogFlux</div>
+  <nav>
+    <button id="login-btn" class="nav-button">Login / Sign Up</button>
+  </nav>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Effortless Log Management, Real-Time Insights.</h1>
+      <p>Aggregate, search, and stream your logs from a single, powerful platform. Built for developers who need speed and simplicity.</p>
+      <button id="get-started-btn" class="cta-button">Get Started for Free</button>
     </div>
-</div>
+  </section>
 
-<div id="signup-view" class="view" style="display: none;">
-    <div class="form-container">
-        <h2>Create Account</h2>
-        <form id="signup-form">
-            <input type="email" id="signup-email" placeholder="Email" required>
-            <input type="password" id="signup-password" placeholder="Password" required>
-            <input type="text" id="signup-company" placeholder="Company Name" required>
-            <button type="submit">Create Account</button>
-        </form>
-        <p>Already have an account? <a href="#" id="show-login">Log In</a></p>
+  <section class="features">
+    <h2>A Complete Observability Toolkit</h2>
+    <div class="feature-cards">
+      <div class="card">
+        <div class="icon-placeholder">🔍</div>
+        <h3>Lightning-Fast Search</h3>
+        <p>Use our powerful query language (LSQL) to filter and find the exact logs you need in milliseconds with PostgreSQL Full-Text Search.</p>
+      </div>
+      <div class="card">
+        <div class="icon-placeholder">⚡</div>
+        <h3>Real-Time Live Tail</h3>
+        <p>Watch your logs stream in live with our low-latency WebSocket interface. See issues as they happen, not after.</p>
+      </div>
+      <div class="card">
+        <div class="icon-placeholder">⚙️</div>
+        <h3>Simple Ingestion</h3>
+        <p>Send logs from any service with a simple, secure, and high-throughput HTTP endpoint. Get set up in minutes, not hours.</p>
+      </div>
     </div>
-</div>
+  </section>
 
-<div id="log-view" class="view" style="display: none;">
-    <header class="main-header">
-        <div class="logo">Log Manager</div>
-        <div class="toolbar">
-            <div id="connection-status">Connecting...</div>
-            <input type="text" id="filter-input" placeholder="Filter logs...">
-            <label class="toggle-switch">
-                <input type="checkbox" id="autoscroll-toggle" checked>
-                <span class="slider"></span>
-                Auto-Scroll
-            </label>
-            <button id="clear-button" class="tool-button">Clear</button>
-            <button id="logout-button" class="tool-button">Logout</button>
-        </div>
-    </header>
-    <main id="log-container">
-    </main>
-</div>
+  <section class="how-it-works">
+    <h2>Get Started in 3 Easy Steps</h2>
+    <div class="steps">
+      <div class="step">
+        <span>1</span>
+        <h3>Sign Up</h3>
+        <p>Create your account and generate a unique API token for your organization.</p>
+      </div>
+      <div class="step">
+        <span>2</span>
+        <h3>Ingest Logs</h3>
+        <p>Configure your applications to send logs to our secure ingestion endpoint.</p>
+      </div>
+      <div class="step">
+        <span>3</span>
+        <h3>Analyze & Observe</h3>
+        <p>Use our powerful Search and Live Tail UIs to gain instant insights into your systems.</p>
+      </div>
+    </div>
+  </section>
+</main>
 
-<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7/bundles/stomp.umd.min.js"></script>
-<script src="script.js"></script>
+<footer class="main-footer">
+  <p>&copy; 2025 LogFlux. All rights reserved.</p>
+</footer>
+
+<script src="landing-script.js"></script>
 </body>
 </html>

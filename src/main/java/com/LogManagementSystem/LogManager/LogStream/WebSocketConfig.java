@@ -79,9 +79,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 StompHeaderAccessor accessor =
                         MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
 
-                // Check if it's a CONNECT message
                 if (StompCommand.CONNECT.equals(accessor.getCommand())) {
-                    // Get the Authorization header
                     String authHeader = accessor.getFirstNativeHeader("Authorization");
                     if (authHeader != null && authHeader.startsWith("Bearer ")) {
                         String jwt = authHeader.substring(7);

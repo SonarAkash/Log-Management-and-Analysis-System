@@ -27,12 +27,12 @@ public class WalProducer {
 
     @Autowired
     public WalProducer(WalProperties pros) throws IOException {
-        System.out.println("producer init");
+        System.err.println("producer init");
 //        this.archivedWalDirectoryPath = pros.getArchivedWalDirectoryPath();
         this.archivedWalDirPath = Paths.get(pros.getArchivedWalDirectoryPath());
         if (!Files.exists(archivedWalDirPath)){
             Files.createDirectories(archivedWalDirPath);
-            System.out.println("successfully created " + archivedWalDirPath.toString());
+//            System.out.println("successfully created " + archivedWalDirPath.toString());
         }
 //        this.watchService = FileSystems.getDefault().newWatchService();
 //        this.archivedWalDirPath.register(watchService, StandardWatchEventKinds.ENTRY_CREATE);
@@ -70,7 +70,7 @@ public class WalProducer {
             try {
                 Thread.sleep(100); // Poll every 100ms
             } catch (InterruptedException e) {
-                System.out.println("Polling was interrupted !!");
+                System.err.println("Polling was interrupted !!");
                 Thread.currentThread().interrupt();
                 return;
             }
@@ -80,7 +80,7 @@ public class WalProducer {
 //            try {
 //                key = watchService.take();
 //            } catch (InterruptedException e) {
-//                System.out.println("Monitoring was interrupted !!");
+//                System.err.println("Monitoring was interrupted !!");
 //                Thread.currentThread().interrupt();
 //                return;
 //            }
@@ -90,7 +90,7 @@ public class WalProducer {
 //                    @SuppressWarnings("unchecked")
 //                    WatchEvent<Path> ev = (WatchEvent<Path>) event;
 //                    Path fileName = ev.context();
-//                    System.out.println("processing files");
+//                    System.err.println("processing files");
 //                    Path filePath = archivedWalDirPath.resolve(fileName);
 //                    processFile(filePath);
 //                }
@@ -113,7 +113,7 @@ public class WalProducer {
                 }
             }
         } catch (IOException e){
-            System.out.println("Error reading existing files:" + e.getMessage());
+            System.err.println("Error reading existing files:" + e.getMessage());
         }
     }
 
@@ -146,7 +146,7 @@ public class WalProducer {
             System.out.println("file deleted : " + file.toString());
             Files.delete(file);
         } catch (IOException e) {
-            System.out.println("failed to open the file :(");
+            System.err.println("failed to open the file :(");
         }
     }
 

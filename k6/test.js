@@ -2,11 +2,9 @@ import http from 'k6/http';
 import { check } from 'k6';
 import { textSummary } from 'https://jslib.k6.io/k6-summary/0.0.2/index.js';
 
-// --- CONFIGURATION ---
 const API_TARGET = __ENV.API_TARGET || 'http://localhost:8080';
-const API_TOKEN = __ENV.API_TOKEN || '8g7HVTEyueAWIOjF6dwS2lBCE3cuAyOmTbhSmmkUQP4'; // Make sure this is a valid token
+const API_TOKEN = __ENV.API_TOKEN || '8g7HVTEyueAWIOjF6dwS2lBCE3cuAyOmTbhSmmkUQP4';
 const INGEST_URL = `${API_TARGET}/api/v1/ingest`;
-// --- END OF CONFIGURATION ---
 
 const SERVICES = ["payment-service", "user-service", "order-service"];
 const INFO_MESSAGES = [
@@ -53,7 +51,7 @@ export default function () {
   const params = {
     headers: {
       'Content-Type': contentType,
-      'X-Tenant-Api-Key': API_TOKEN, // Use the header name your app expects
+      'X-Tenant-Api-Key': API_TOKEN,
     },
   };
 

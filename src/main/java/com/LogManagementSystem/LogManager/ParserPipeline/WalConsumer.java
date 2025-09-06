@@ -35,14 +35,12 @@ public class WalConsumer {
         @Override
         public LogEvent call() {
 
-            // call a method that decides which parser
-            // to use and returns a ready to store log
             LogEvent logEvent = null;
             try{
                 logEvent = parserDecider.decideAndParseLog(log);
 //                Thread.sleep(500);
             } catch (Exception e) {
-                System.out.println("failed parsing : " + e.getMessage());
+                System.err.println("failed parsing : " + e.getMessage());
             }
 
             return logEvent;
@@ -79,7 +77,7 @@ public class WalConsumer {
             } catch (InterruptedException e) {
 //                throw new RuntimeException(e);
                 Thread.currentThread().interrupt();
-                System.out.println("Consumer stopped !!");
+                System.err.println("Consumer stopped !!");
             }
 
         }
@@ -90,19 +88,17 @@ public class WalConsumer {
                 Future<LogEvent> completedFuture = completionService.take();
                 LogEvent logEvent = completedFuture.get();
                 logEvent.setIngestedAt(Instant.now());
-//                System.out.println(logEvent + "\n");
-//              store this log later
                 logBuffer.put(logEvent);
             } catch (InterruptedException e) {
-                System.out.println("completion service was interrupted !!\n");
+                System.err.println("completion service was interrupted !!\n");
 //                throw new RuntimeException(e);
                 Thread.currentThread().interrupt();
-                System.out.println(e.getMessage() + "\n");
+                System.err.println(e.getMessage() + "\n");
 
             } catch (ExecutionException e) {
 //                throw new RuntimeException(e);
-                System.out.println("thread task was interrupted or threw exception !");
-                System.out.println(e.getMessage());
+                System.err.println("thread task was interrupted or threw exception !");
+                System.err.println(e.getMessage());
             }
         }
     }

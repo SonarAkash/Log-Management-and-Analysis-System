@@ -36,7 +36,7 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/auth/**", "/public", "/actuator/**", "/",  "/",
+                        .requestMatchers("/auth/**", "/public", "/actuator/**", "/",
                                 "/*.html",
                                 "/*.css",
                                 "/*.js",
@@ -50,12 +50,27 @@ public class SecurityConfig {
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(tenantApiKeyFilter, JwtAuthenticationFilter.class)
 
+
                 .exceptionHandling(ex -> ex
+
+                        // Handles failed authentication attempts (e.g., bad token) -> 401
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                            response.setContentType("application/json");
+                            Map<String, Object> data = new HashMap<>();
+                            data.put("timestamp", new Date().toString());
+                            data.put("status", HttpServletResponse.SC_UNAUTHORIZED);
+                            data.put("error", "Unauthorized");
+                            data.put("message", "Authentication Failed: " + authException.getMessage());
+                            data.put("path", request.getRequestURI());
+                            new ObjectMapper().writeValue(response.getWriter(), data);
+                        })
+                        // Handles failed authorization attempts (e.g., wrong role) -> 403
                         .accessDeniedHandler((request, response, accessDeniedException) -> {
                             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                             response.setContentType("application/json");
 
-                            // Create a clear JSON error response
+                            // Creating a clear JSON error response
                             Map<String, Object> data = new HashMap<>();
                             data.put("timestamp", new Date().toString());
                             data.put("status", HttpServletResponse.SC_FORBIDDEN);
@@ -63,7 +78,6 @@ public class SecurityConfig {
                             data.put("message", "Access Denied: You do not have the necessary permissions.");
                             data.put("path", request.getRequestURI());
 
-                            // Write the JSON response using an ObjectMapper
                             ObjectMapper objectMapper = new ObjectMapper();
                             response.getWriter().write(objectMapper.writeValueAsString(data));
                         })

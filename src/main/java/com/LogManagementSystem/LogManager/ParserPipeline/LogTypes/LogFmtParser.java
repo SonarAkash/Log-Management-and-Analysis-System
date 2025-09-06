@@ -5,7 +5,6 @@ import com.LogManagementSystem.LogManager.ParserPipeline.BindFields;
 import com.LogManagementSystem.LogManager.ParserPipeline.LogEnrichment.LogEventEnrichment;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;

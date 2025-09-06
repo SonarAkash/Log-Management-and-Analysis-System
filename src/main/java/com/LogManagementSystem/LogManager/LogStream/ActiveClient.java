@@ -11,7 +11,7 @@ public class ActiveClient {
     private final Map<UUID, String> clientToSessionId = new HashMap<>();
 
     public void registerClient(UUID tenantId, String email){
-        System.out.println("user register : " + tenantId + " , " + email);
+//        System.out.println("user register : " + tenantId + " , " + email);
         clientToSessionId.put(tenantId, email);
     }
     public boolean containsClient(UUID tenantId){

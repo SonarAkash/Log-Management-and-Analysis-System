@@ -38,7 +38,7 @@ public class JsonParser implements Log{
             bindFields.bindRemainingFields(flattenMap, logEvent);
         } catch (JsonProcessingException e) {
 //            throw new RuntimeException(e);
-            System.out.println("Failed parsing json !!");
+            System.err.println("Failed parsing json !!");
         }
 
         return logEventEnrichment.enrichLog(logEvent);

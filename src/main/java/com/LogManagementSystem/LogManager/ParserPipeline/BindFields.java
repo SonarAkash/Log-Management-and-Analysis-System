@@ -21,11 +21,11 @@ public class BindFields {
                 Field field = clazz.getDeclaredField(key); // get field with same name
                 field.setAccessible(true);   // allow access (even private)
 
-                Object current = field.get(instance);// get current field value
+                Object current = field.get(instance);
 
                 // only set if not already filled
                 if(current == null || (current instanceof Number && ((Number) current).intValue() == 0)){
-                    field.set(instance, value); // update field dynamically
+                    field.set(instance, value);
                     presentFields.add(key);
                 }
             } catch (NoSuchFieldException e) {

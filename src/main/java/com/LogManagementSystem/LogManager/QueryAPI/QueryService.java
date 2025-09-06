@@ -11,7 +11,6 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import com.LogManagementSystem.LogManager.LQLparser.Token.Token;
@@ -43,28 +42,22 @@ public class QueryService {
         this.provider = parser;
     }
 
-    public Page<LogEvent> getLogs(int offset, int size, String query, UUID tenant_id){
-        Pageable pageable = PageRequest.of(offset, size);
+    public Page<LogEvent> getLogs(Pageable pageable, SearchRequestDTO searchRequestDTO, UUID tenant_id){
+        String query = searchRequestDTO.q();
         List<Token> tokens = tokenizer.scanTokens(query);
-//        System.out.println(tokens);
         Parser parser = provider.getObject();
         parser.init(tokens);
         Expr expr = parser.parse();
         if(expr != null){
             semanticAnalyzer.analyze(expr);
-            SqlQuery sqlQuery = sqlGenerator.generate(expr, tenant_id);
+            SqlQuery sqlQuery = sqlGenerator.generate(expr, tenant_id, searchRequestDTO);
             String countSql = "SELECT count(*) FROM logs WHERE " + sqlQuery.query();
-//            System.out.println(countSql);
-//            System.out.println(sqlQuery.parameters());
-//            System.out.println();
            Query countQuery = entityManager.createNativeQuery(countSql);
             for(int i=0; i<sqlQuery.parameters().size(); i++){
                 countQuery.setParameter(i + 1, sqlQuery.parameters().get(i));
             }
             long totalResults = ((Number) countQuery.getSingleResult()).longValue();
             String dataSql = "SELECT * FROM logs WHERE " + sqlQuery.query() + " ORDER BY ts DESC";
-//            System.out.println(dataSql);
-//            System.out.println(sqlQuery.parameters());
             Query dataQuery = entityManager.createNativeQuery(dataSql, LogEvent.class);
             for (int i = 0; i < sqlQuery.parameters().size(); i++) {
                 dataQuery.setParameter(i + 1, sqlQuery.parameters().get(i));

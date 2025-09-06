@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Authentication - LogFlux</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="auth-style.css">
+</head>
+<body>
+<div id="notification" class="notification"></div>
+
+<div id="login-view" class="view">
+  <div class="form-container">
+    <h2>Log In to LogFlux</h2>
+    <form id="login-form">
+      <input type="email" id="login-email" placeholder="Email" required>
+      <input type="password" id="login-password" placeholder="Password" required>
+      <button type="submit">Login</button>
+    </form>
+    <p>Don't have an account? <a href="#" id="show-signup">Sign Up</a></p>
+  </div>
+</div>
+
+<div id="signup-view" class="view" style="display: none;">
+  <div class="form-container">
+    <h2>Create Your Account</h2>
+    <form id="signup-form">
+      <input type="email" id="signup-email" placeholder="Email" required>
+      <input type="password" id="signup-password" placeholder="Password" required>
+      <input type="text" id="signup-company" placeholder="Company Name" required>
+      <button type="submit">Create Account</button>
+    </form>
+
+    <div id="api-key-display" class="api-key-container" style="display: none;">
+      <h3>Registration Successful!</h3>
+      <p>This is your one-time API Key. Please save it in a secure location.</p>
+      <div class="credential-box">
+        <pre id="api-key-value"></pre>
+        <button id="copy-key-btn">Copy</button>
+      </div>
+      <p>Send your logs via POST to:</p>
+      <div class="credential-box">
+        <pre id="ingest-url-value"></pre>
+        <button id="copy-url-btn">Copy</button>
+      </div>
+      <button id="go-to-login-btn">Proceed to Login</button>
+    </div>
+
+    <p>Already have an account? <a href="#" id="show-login">Log In</a></p>
+  </div>
+</div>
+<script src="auth-script.js"></script>
+</body>
+</html>

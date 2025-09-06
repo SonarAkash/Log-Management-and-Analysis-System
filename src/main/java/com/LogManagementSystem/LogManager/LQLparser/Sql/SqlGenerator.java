@@ -3,8 +3,10 @@ package com.LogManagementSystem.LogManager.LQLparser.Sql;
 import com.LogManagementSystem.LogManager.LQLparser.AbstractSyntaxTree.*;
 import com.LogManagementSystem.LogManager.LQLparser.Token.Token;
 import com.LogManagementSystem.LogManager.LQLparser.Token.TokenType;
+import com.LogManagementSystem.LogManager.QueryAPI.SearchRequestDTO;
 import org.springframework.stereotype.Service;
 
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -22,15 +24,32 @@ public class SqlGenerator implements Expr.Visitor<SqlQuery>{
             "ts", "message", "service", "level", "hostname", "client_ip"
     );
 
-    public SqlQuery generate(Expr expression, UUID tenantId) {
+    public SqlQuery generate(Expr expression, UUID tenantId, SearchRequestDTO searchRequestDTO) {
         if (expression == null) {
             return new SqlQuery("", new ArrayList<>());
         }
-        SqlQuery lqlQuery = expression.accept(this);
-        String finalSql = "tenant_id = ? AND (" + lqlQuery.query() + ")";
+        OffsetDateTime start = null;
+        if (searchRequestDTO.start() != null && !searchRequestDTO.start().isEmpty()) {
+            start = OffsetDateTime.parse(searchRequestDTO.start());
+        }
+
+        OffsetDateTime end = null;
+        if (searchRequestDTO.end() != null && !searchRequestDTO.end().isEmpty()) {
+            end = OffsetDateTime.parse(searchRequestDTO.end());
+        }
         List<Object> finalParameters = new ArrayList<>();
+        SqlQuery lqlQuery = expression.accept(this);
+        String q = "";
         finalParameters.add(tenantId);
+        if (start != null && end != null) {
+            q = "ts BETWEEN ? AND ?) AND (";
+            finalParameters.add(start);
+            finalParameters.add(end);
+        }
+        String finalSql = "(tenant_id = ?) AND (" + q + lqlQuery.query() + ")";
         finalParameters.addAll(lqlQuery.parameters());
+//        System.out.println(finalSql);
+//        System.out.println(finalParameters);
 
         return new SqlQuery(finalSql, finalParameters);
     }

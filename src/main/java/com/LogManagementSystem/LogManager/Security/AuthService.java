@@ -16,6 +16,7 @@ import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.Base64;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
@@ -25,8 +26,22 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final TenantRepository tenantRepository;
+    private static final String EMAIL_REGEX =
+            "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
+
+    private static final Pattern EMAIL_PATTERN = Pattern.compile(EMAIL_REGEX);
 
     public AuthenticationResponse register(RegisterRequest request){
+        if(!EMAIL_PATTERN.matcher(request.getEmail()).matches()){
+            return AuthenticationResponse.builder()
+                    .error("Invalid Email format")
+                    .build();
+        }
+        if(userRepository.existsByEmail(request.getEmail())){
+            return AuthenticationResponse.builder()
+                    .error("Email already in use")
+                    .build();
+        }
         final boolean[] companyExits = {true};
         Tenant tenant = tenantRepository.findByCompanyName(request.getCompanyName())
                 .orElseGet(() -> {
@@ -52,7 +67,8 @@ public class AuthService {
         var jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse.builder()
                 .token(jwtToken)
-                .apiKey(tenant.getApiTokenHash())
+                .apiKey(companyExits[0] ? null : tenant.getApiTokenHash())
+                .ingestUrl(companyExits[0] ? null : "api/v1/ingest")
                 .build();
     }
 

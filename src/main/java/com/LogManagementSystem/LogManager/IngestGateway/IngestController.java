@@ -60,11 +60,10 @@ public class IngestController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated.");
         }
 
-        // Get the details of the currently logged-in user
         String userEmail = authentication.getName();
         User userDetails = (User) authentication.getPrincipal();
 
-        // Construct the same destination your UI is subscribed to
+        // Construct the same destination the client UI is subscribed to
         String destination = "/queue/stream/";
         String payload = "{\"type\":\"TEST\", \"payload\":\"This is a direct test message sent at " + Instant.now() + "\"}";
 

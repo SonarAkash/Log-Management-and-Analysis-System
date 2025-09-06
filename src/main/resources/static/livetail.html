@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Tail - LogFlux</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="livetail-style.css">
+</head>
+<body class="app-body">
+<div id="notification" class="notification"></div>
+
+<header class="main-header">
+    <div class="logo">LogFlux</div>
+    <nav>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="livetail.html" class="active">Live Tail</a>
+    <a href="search.html">Search</a>
+    <a href="docs.html">LSQL Guide</a>
+    </nav>
+    <div class="user-controls">
+        <span id="user-email-display"></span>
+        <button id="logout-button" class="tool-button">Logout</button>
+    </div>
+</header>
+
+<div class="toolbar">
+    <div id="connection-status">Connecting...</div>
+    <input type="text" id="filter-input" placeholder="Filter logs in real-time...">
+    <label class="toggle-switch">
+        <input type="checkbox" id="autoscroll-toggle" checked>
+        <span class="slider"></span>
+        Auto-Scroll
+    </label>
+    <button id="clear-button" class="tool-button">Clear Logs</button>
+</div>
+
+<main id="log-container">
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7/bundles/stomp.umd.min.js"></script>
+<script src="livetail-script.js"></script>
+</body>
+</html>

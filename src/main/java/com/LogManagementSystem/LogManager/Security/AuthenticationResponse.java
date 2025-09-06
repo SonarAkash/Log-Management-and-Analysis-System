@@ -9,4 +9,5 @@ public class AuthenticationResponse {
     private String token;
     private String error;
     private String apiKey;
+    private String ingestUrl;
 }

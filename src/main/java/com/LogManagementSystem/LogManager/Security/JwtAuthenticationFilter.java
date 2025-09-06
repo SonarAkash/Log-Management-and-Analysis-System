@@ -6,7 +6,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,11 +18,11 @@ import java.io.IOException;
 
 @Component
 @RequiredArgsConstructor
-//@Order(2)
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
+
 
 
     @Override
@@ -35,6 +34,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String authHeader = request.getHeader("Authorization");
         final String jwt;
         final String username;
+
+        System.out.println("\n--- JWT FILTER DEBUG ---");
+        System.out.println("Request Path: " + request.getServletPath());
+        System.out.println("Authorization Header: " + request.getHeader("Authorization"));
+
 
         if(authHeader == null || !authHeader.startsWith("Bearer ")){
             filterChain.doFilter(request, response);
@@ -68,7 +72,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected boolean shouldNotFilter(HttpServletRequest request) {
         // This filter should not apply to the /logs endpoint,
         // which is handled exclusively by the TenantApiKeyFilter.
-        return request.getServletPath().startsWith("/api/v1/ingest");
+        String path = request.getServletPath();
+        return  path.startsWith("/api/v1/ingest") ||
+                path.startsWith("/auth") ||
+                path.startsWith("/websocket-connect") ||
+                path.startsWith("/actuator") ||
+                path.equals("/") ||
+                path.endsWith(".html") ||
+                path.endsWith(".css") ||
+                path.endsWith(".js") ||
+                path.endsWith(".ico");
     }
 
 }

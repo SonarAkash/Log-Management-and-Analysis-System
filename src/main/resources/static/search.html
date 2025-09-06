@@ -3,36 +3,41 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Search Logs</title>
+  <title>Search Logs - LogFlux</title>
   <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="search-style.css">
+  <link rel="stylesheet" href="livetail-style.css"> <link rel="stylesheet" href="search-style.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/litepicker/dist/css/litepicker.css"/>
 </head>
-<body class="search-body">
+<body class="app-body">
+<div id="notification" class="notification"></div>
 
 <header class="main-header">
-  <div class="logo">Log Manager</div>
+  <div class="logo">LogFlux</div>
   <nav>
-    <a href="index.html">Live Tail</a>
-    <a href="search.html" class="active">Search</a>
+  <a href="dashboard.html">Dashboard</a>
+  <a href="livetail.html">Live Tail</a>
+  <a href="search.html" class="active">Search</a>
+  <a href="docs.html">LSQL Guide</a>
+
   </nav>
   <div class="user-controls">
+    <span id="user-email-display"></span>
     <button id="logout-button" class="tool-button">Logout</button>
   </div>
 </header>
 
 <div class="search-toolbar">
-  <input type="text" id="daterange-input" placeholder="Select date range...">
+  <input type="text" id="daterange-input" placeholder="Select date range (optional)...">
   <div class="search-bar">
     <input type="text" id="lsql-input" placeholder="Enter LSQL query (e.g., level:ERROR payment failed)">
     <button id="search-button">Search</button>
   </div>
 </div>
 
-<main id="results-container">
+<main id="main-content-area">
   <div id="initial-state" class="state-message">
     <h2>Search Your Logs</h2>
-    <p>Use the search bar above to find logs by keyword, filter by level, service, and more.</p>
+    <p>Use the search bar above to find logs by keyword, filter by level, service, date, and more.</p>
   </div>
 
   <div id="loading-spinner" class="state-message hidden">
@@ -42,9 +47,10 @@
 
   <div id="empty-state" class="state-message hidden">
     <h2>No Logs Found</h2>
-    <p>Your query did not match any logs. Try broadening your search.</p>
+    <p>Your query did not match any logs. Try broadening your search terms or date range.</p>
   </div>
 
+  <div id="results-container"></div>
 </main>
 
 <footer id="pagination-controls" class="hidden">
@@ -54,6 +60,6 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/litepicker/dist/bundle.js"></script>
-<script src="search.js"></script>
+<script src="search-script.js"></script>
 </body>
 </html>
