@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LSQL Guide - LogFlux</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="livetail-style.css">
+  <link rel="stylesheet" href="search-style.css">
+  <link rel="stylesheet" href="docs-style.css">
+</head>
+<body class="app-body">
+<div id="notification" class="notification"></div>
+
+<header class="main-header">
+  <div class="logo">LogFlux</div>
+  <nav>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="livetail.html">Live Tail</a>
+    <a href="search.html">Search</a>
+    <a href="docs.html" class="active">LSQL Guide</a>
+  </nav>
+  <div class="user-controls">
+    <span id="user-email-display"></span>
+    <button id="logout-button" class="tool-button">Logout</button>
+  </div>
+</header>
+
+<main class="docs-main">
+  <h1>LSQL Syntax Contract</h1>
+  <p>The Log Query Language (LSQL) allows you to search logs using a flexible and powerful syntax. The core components are search terms, field filters, operators, and groups.</p>
+
+  <h2>1. Search Terms (Barewords)</h2>
+  <p>These are used for general, full-text search across the log message and all text attributes.</p>
+  
+  <div class="example-block">
+    <h4>Single Word Search</h4>
+    <p>A bareword without spaces:</p>
+    <pre><code>error</code></pre>
+  </div>
+
+  <div class="example-block">
+    <h4>Exact Phrase Search</h4>
+    <p>A phrase containing spaces must be enclosed in double quotes ("):</p>
+    <pre><code>"user login failed"</code></pre>
+  </div>
+
+  <h2>2. Field Filters</h2>
+  <p>These are used to search for specific values within specific fields.</p>
+  
+  <div class="example-block">
+    <h4>Basic Field Filters</h4>
+    <p>Use <code>key:value</code> or <code>key=value</code> syntax. Both separators are valid:</p>
+    <pre><code>level:error
+service="api-gateway"</code></pre>
+  </div>
+
+  <div class="example-block">
+    <h4>Nested Field Filters</h4>
+    <p>Use dot notation to access nested JSON attributes:</p>
+    <pre><code>user.id:12345
+request.headers.origin:"*.example.com"</code></pre>
+  </div>
+
+  <h2>3. Boolean Operators</h2>
+  <p>You can combine any terms or filters using boolean operators to create complex queries.</p>
+  
+  <div class="example-block">
+    <h4>Available Operators</h4>
+    <ul>
+      <li><strong>AND:</strong> Both conditions must match</li>
+      <li><strong>OR:</strong> Either condition can match</li>
+      <li><strong>NOT:</strong> Exclude matches</li>
+    </ul>
+    <p>Operators are case-insensitive and evaluated in order: NOT (highest) → AND → OR (lowest)</p>
+  </div>
+
+  <div class="example-block">
+    <h4>Using NOT Operator</h4>
+    <p>Find logs with 'error' that are NOT from the 'payment-service':</p>
+    <pre><code>error NOT service:payment-service</code></pre>
+  </div>
+
+  <div class="example-block">
+    <h4>Implicit AND</h4>
+    <p>These queries are identical:</p>
+    <pre><code>payment failed
+payment AND failed</code></pre>
+    <p>Space between terms implies AND operator</p>
+  </div>
+
+  <h2>4. Grouping</h2>
+  <p>Use parentheses <code>()</code> to group expressions and control operator precedence. This is especially useful for complex queries with multiple conditions.</p>
+  
+  <div class="example-block">
+    <h4>Without Grouping</h4>
+    <pre><code>service:auth AND login OR logout</code></pre>
+    <p>⚠️ This finds:</p>
+    <ul>
+      <li>Logs from auth service that are login attempts</li>
+      <li>OR any log containing "logout" (regardless of service)</li>
+    </ul>
+  </div>
+
+  <div class="example-block">
+    <h4>With Grouping</h4>
+    <pre><code>service:auth AND (login OR logout)</code></pre>
+    <p>✅ This correctly finds:</p>
+    <ul>
+      <li>Logs from auth service that contain either "login" OR "logout"</li>
+    </ul>
+  </div>
+
+  <h2>5. Special Searches</h2>
+  <div class="example-block">
+    <h4>Check Field Existence</h4>
+    <p>Use <code>_exists_</code> to find logs where a specific field is present:</p>
+    <pre><code>_exists_:trace.id
+_exists_:error.stack</code></pre>
+  </div>
+
+  <div class="example-block">
+    <h4>Pro Tip: Combining Special Searches</h4>
+    <p>You can combine existence checks with other filters:</p>
+    <pre><code>level:error AND _exists_:error.stack AND service:payment-service</code></pre>
+  </div>
+</main>
+
+<script>
+document.querySelectorAll('pre code').forEach(block => {
+    block.addEventListener('mouseenter', () => {
+        block.style.transition = 'all 0.3s ease';
+        block.style.background = 'var(--bg-medium)';
+    });
+    block.addEventListener('mouseleave', () => {
+        block.style.background = 'none';
+    });
+});
+</script>
+
+</body>
+</html>
