@@ -51,6 +51,9 @@ public class DatabaseWriter {
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 break;
+            } catch (Exception e) {
+                System.err.println("!!! FAILED TO SAVE LOG TO DATABASE !!!");
+                e.printStackTrace();
             }
         }
     }
