@@ -74,7 +74,11 @@ public class User implements UserDetails {
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY) // this means when we fetch User from db, it tells hibernate
+    // don't fetch tenant instantly only fetch it when some method is called upon tenant obj
+    // like tenant.getCompanyName() till then hibernate gives a proxy obj in place of tenant,
+    // one more thing the obj should only be invoked within the transaction i.e. inside the
+    // method, it won't work if we pass the User from method1 to method2 and then call User.getTenant(getCompanyName()) => Wrong
     @JoinColumn(name = "tenant_id", nullable = false)
     private Tenant tenant;
 

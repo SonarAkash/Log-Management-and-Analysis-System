@@ -45,6 +45,7 @@ public class QueryService {
     public Page<LogEvent> getLogs(Pageable pageable, SearchRequestDTO searchRequestDTO, UUID tenant_id){
         String query = searchRequestDTO.q();
         List<Token> tokens = tokenizer.scanTokens(query);
+        System.out.println(tokens);
         Parser parser = provider.getObject();
         parser.init(tokens);
         Expr expr = parser.parse();
@@ -52,7 +53,7 @@ public class QueryService {
             semanticAnalyzer.analyze(expr);
             SqlQuery sqlQuery = sqlGenerator.generate(expr, tenant_id, searchRequestDTO);
             String countSql = "SELECT count(*) FROM logs WHERE " + sqlQuery.query();
-           Query countQuery = entityManager.createNativeQuery(countSql);
+            Query countQuery = entityManager.createNativeQuery(countSql);
             for(int i=0; i<sqlQuery.parameters().size(); i++){
                 countQuery.setParameter(i + 1, sqlQuery.parameters().get(i));
             }

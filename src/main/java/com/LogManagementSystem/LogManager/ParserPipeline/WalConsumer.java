@@ -10,14 +10,12 @@ import java.util.concurrent.*;
 
 @Service
 public class WalConsumer {
-    private WalProducer producer;
-    private ExecutorCompletionService<LogEvent> completionService;
-    private ParserDecider parserDecider;
-    private BlockingQueue<String> queue;
-    private BlockingQueue<LogEvent> logBuffer;
+    private final ExecutorCompletionService<LogEvent> completionService;
+    private final ParserDecider parserDecider;
+    private final BlockingQueue<String> queue;
+    private final BlockingQueue<LogEvent> logBuffer;
 
     public WalConsumer(WalProducer producer, ParserDecider parserDecider, WalProducer walProducer, DatabaseWriter databaseWriter) throws InterruptedException {
-        this.producer = producer;
         this.parserDecider = parserDecider;
         completionService = new ExecutorCompletionService<>(Executors.newFixedThreadPool(4));
         this.queue = walProducer.getQueue();
@@ -26,7 +24,7 @@ public class WalConsumer {
 
     class ReadLogs implements Callable<LogEvent> {
 
-        private String log;
+        private final String log;
 
         public ReadLogs(String log){
             this.log = log;

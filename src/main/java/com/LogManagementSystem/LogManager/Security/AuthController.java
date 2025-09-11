@@ -23,17 +23,19 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> register(@Valid @RequestBody RegisterRequest request){
-        try {
-            return ResponseEntity.ok(authService.register(request));
-        } catch (Exception e) {
-            System.err.println("Registration failed : " + e.getMessage());
-            return ResponseEntity.
-                    status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(AuthenticationResponse.builder()
-                    .error("Error registering, please try again later ! " + e)
-                    .build()
-            );
-        }
+//        try {
+//            return ResponseEntity.ok(authService.register(request));
+//        } catch (Exception e) {
+//            System.err.println("Registration failed : " + e.getMessage());
+//            return ResponseEntity.
+//                    status(HttpStatus.BAD_REQUEST)
+//                    .body(AuthenticationResponse.builder()
+//                    .error(e.getMessage())
+//                    .build()
+//            );
+//        }
+        return ResponseEntity.ok(authService.register(request));
+
     }
 
     @PostMapping("/login")
@@ -44,16 +46,16 @@ public class AuthController {
             );
             final var user = userDetailsService.loadUserByUsername(request.getEmail());
             final var jwt = jwtService.generateToken(user);
-            System.out.println("Found user");
+//            System.out.println("Found user");
             return ResponseEntity.ok(AuthenticationResponse.builder()
                     .token(jwt)
                     .build());
         } catch (Exception e) {
             System.err.println("user not found");
             return ResponseEntity.
-                    status(HttpStatus.UNAUTHORIZED)
+                    status(HttpStatus.NOT_FOUND)
                     .body(AuthenticationResponse.builder()
-                            .error("Unauthorized access ! ")
+                            .error("Invalid Credentials ! ")
                             .build());
         }
 

@@ -13,7 +13,7 @@ import java.time.Instant;
 
 @Service
 public class FileWalAppender implements AutoCloseable{
-    private long maxSize;
+    private final long maxSize;
     private long currSize;
     private Path activeWalPath;
     private Path archivedWalDirectoryPath;

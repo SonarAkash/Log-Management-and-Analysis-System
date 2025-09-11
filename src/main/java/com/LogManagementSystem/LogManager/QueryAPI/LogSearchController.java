@@ -33,13 +33,14 @@ public class LogSearchController {
 
     @PostMapping("logs/search")
     public ResponseEntity<?> searchLogs(@Valid @RequestBody SearchRequestDTO queryDTO, Pageable pageable){
-        System.out.println("HI");
+//        System.out.println("HI");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         Optional<User> userOptional = userRepository.findByEmail(userDetails.getUsername());
         if(userOptional.isEmpty()){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body("Unauthorized Request, please login in ");
+                    .body(Map.of(
+                            "error","Unauthorized Request, please login in "));
         }
         UUID tenantId =  userOptional.get().getTenant().getId();
         try{

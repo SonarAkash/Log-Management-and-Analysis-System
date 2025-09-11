@@ -23,11 +23,11 @@ public class WalProducer {
     private Path archivedWalDirPath;
 //    private WatchService watchService;
     @Getter
-    private BlockingQueue<String> queue;
+    private final BlockingQueue<String> queue;
 
     @Autowired
     public WalProducer(WalProperties pros) throws IOException {
-        System.err.println("producer init");
+        System.out.println("producer init");
 //        this.archivedWalDirectoryPath = pros.getArchivedWalDirectoryPath();
         this.archivedWalDirPath = Paths.get(pros.getArchivedWalDirectoryPath());
         if (!Files.exists(archivedWalDirPath)){
@@ -40,7 +40,7 @@ public class WalProducer {
 //        start();
 //        calling the start here will be done by spring. Spring first calls constructors to initialize obj, then inject
 //        inject dependencies. Calling the start() from constructor will make main thread to loop in watch service
-//        to detect and wait for event. And thus main thread never actually starts which cause the application no to
+//        to detect and wait for event. And thus main thread never actually starts which cause the application not to
 //        even start. Better to annotate the start() with PostConstruct, PostConstruct is called after constructor and
 //        dependency injection, letting the main thread to start the application
     }

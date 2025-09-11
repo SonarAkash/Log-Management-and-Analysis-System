@@ -10,6 +10,9 @@ import java.util.Set;
 @Service
 public class BindFields {
 
+
+    // This is called Reflection API and is used to bind fields have same name as key in classes
+
     public <T> void bindRemainingFields(Map<String, Object> map, T instance){
         Class<?> clazz = instance.getClass();
         Set<String> presentFields = new HashSet<>();

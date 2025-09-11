@@ -6,10 +6,12 @@ import com.LogManagementSystem.LogManager.LQLparser.AbstractSyntaxTree.Expr;
 import com.LogManagementSystem.LogManager.LQLparser.AbstractSyntaxTree.Grouping;
 import com.LogManagementSystem.LogManager.LQLparser.AbstractSyntaxTree.Literal;
 import com.LogManagementSystem.LogManager.LQLparser.AbstractSyntaxTree.Unary;
+import com.LogManagementSystem.LogManager.LQLparser.Exception.ParserError;
 import com.LogManagementSystem.LogManager.LQLparser.Token.Token;
 import com.LogManagementSystem.LogManager.LQLparser.Token.TokenType;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
+
 
 import java.util.List;
 
@@ -23,7 +25,7 @@ import java.util.List;
 @Scope("prototype")
 public class Parser {
 
-    private static class ParseError extends RuntimeException {}
+//    private static class ParseError extends RuntimeException {}
 
     private List<Token> tokens;
     private int current = 0;
@@ -33,12 +35,14 @@ public class Parser {
     }
 
     public Expr parse() {
-        try {
-            if (isAtEnd()) return null;
-            return expression();
-        } catch (ParseError error) {
-            return null;
-        }
+//        try {
+//            if (isAtEnd()) return null;
+//            return expression();
+//        } catch (ParserError error) {
+//            return null;
+//        }
+        if (isAtEnd()) return null;
+        return expression();
     }
 
     //  Grammar Implementation: expression -> term -> factor -> unary -> primary
@@ -146,9 +150,9 @@ public class Parser {
         return tokens.get(current - 1);
     }
 
-    private ParseError error(Token token, String message) {
+    private ParserError error(Token token, String message) {
         System.err.println("Parse Error at token " + token + ": " + message);
-        return new ParseError();
+        return new ParserError("Parse Error at token " + token + ": " + message);
     }
 }
 

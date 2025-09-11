@@ -6,8 +6,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class LogEventEnrichment {
 
-    private GeoIpEnricher geoIpEnricher;
-    private UserAgentEnricher userAgentEnricher;
+    private final GeoIpEnricher geoIpEnricher;
+    private final UserAgentEnricher userAgentEnricher;
 
     public LogEventEnrichment(GeoIpEnricher geoIpEnricher, UserAgentEnricher userAgentEnricher) {
         this.geoIpEnricher = geoIpEnricher;

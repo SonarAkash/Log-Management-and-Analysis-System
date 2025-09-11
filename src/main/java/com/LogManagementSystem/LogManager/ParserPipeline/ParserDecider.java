@@ -15,11 +15,11 @@ import java.util.regex.Pattern;
 @Service
 public class ParserDecider {
 
-    private ObjectMapper mapper;
-    private Pattern LOGFMT_PATTERN;
-    private JsonParser jsonParser;
-    private LogFmtParser logFmtParser;
-    private DefaultLog defaultLog;
+    private final ObjectMapper mapper;
+    private final Pattern LOGFMT_PATTERN;
+    private final JsonParser jsonParser;
+    private final LogFmtParser logFmtParser;
+    private final DefaultLog defaultLog;
 
     public ParserDecider(JsonParser jsonParser
             , LogFmtParser logFmtParser, DefaultLog defaultLog){
@@ -66,7 +66,7 @@ public class ParserDecider {
             logEvent.setTenantId(tenantId);
             logEvent.setTs(timestamp);
         } catch (Exception e) {
-            System.out.println("something went wrong while parsing :( , method : decideAndParseLog -> " + e.getMessage());
+            System.err.println("something went wrong while parsing :( , method : decideAndParseLog -> " + e.getMessage());
         }
 
         // switch case to identify the type of log i.e. Json or logfmt for now only
@@ -79,7 +79,7 @@ public class ParserDecider {
                 default -> defaultLog.parse(log, logEvent);
             };
         } catch (Exception e) {
-            System.out.println("TYPE parsing failed " + e.getMessage());
+            System.err.println("TYPE parsing failed " + e.getMessage());
         }
 
         return logEvent;

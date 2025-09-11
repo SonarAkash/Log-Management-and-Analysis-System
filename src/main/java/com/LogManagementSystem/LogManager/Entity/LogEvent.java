@@ -23,27 +23,22 @@ public class LogEvent {
     @Column(nullable = false)
     private Instant ts;
 
-//    @Column(nullable = false)
     private String message;
 
     private String service;
 
     private String level;
 
-    // --- Tenant Information ---
     @Column(name = "tenant_id", nullable = false)
     private UUID tenantId;
 
-    // --- Enriched Data ---
     @Column(nullable = false)
-    private Instant ingestedAt; // Timestamp when our system processed it
+    private Instant ingestedAt;
 
     private String hostname;
 
     private String clientIp;
 
-
-    // --- JSONB field for flexible attributes ---
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")
     private Map<String, Object> attrs;

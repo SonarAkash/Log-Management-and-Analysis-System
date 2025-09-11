@@ -16,16 +16,58 @@ document.addEventListener('DOMContentLoaded', () => {
         const email = document.getElementById('login-email').value;
         const password = document.getElementById('login-password').value;
         try {
+            // Debug: Log the login attempt
+            console.log('Attempting login for:', email);
+
             const response = await fetch('auth/login', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
                 body: JSON.stringify({ email, password })
             });
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || 'Login failed.');
+
+            // Debug: Log the raw response
+            console.log('Response status:', response.status);
+            console.log('Response ok:', response.ok);
+            
+            let data;
+            const responseText = await response.text();
+            console.log('Raw response text:', responseText);
+            
+            try {
+                data = JSON.parse(responseText);
+                console.log('Parsed response data:', data);
+            } catch (parseError) {
+                console.error('Error parsing response:', parseError);
+                data = { error: responseText };
             }
-            const data = await response.json();
+
+            if (!response.ok || !data.token) {  // Check both response.ok and if token exists
+                // Debug: Log error details
+                console.error('Login failed:', {
+                    status: response.status,
+                    statusText: response.statusText,
+                    data: data
+                });
+
+                // Specifically check for the error field in the response
+                let errorMsg;
+                if (data && data.error) {
+                    errorMsg = data.error;  // Use the exact error message from the response
+                } else if (data && typeof data === 'object') {
+                    errorMsg = data.message || data.errorMessage || 'Login failed';
+                } else if (typeof data === 'string') {
+                    errorMsg = data;
+                } else {
+                    errorMsg = 'Login failed';
+                }
+                
+                throw new Error(errorMsg);
+            }
+
+            // If login successful, store token and redirect
             localStorage.setItem('jwtToken', data.token);
             window.location.href = 'dashboard.html';
         } catch (error) {
@@ -39,14 +81,50 @@ document.addEventListener('DOMContentLoaded', () => {
         const password = document.getElementById('signup-password').value;
         const companyName = document.getElementById('signup-company').value;
         try {
+            // Debug: Log the request
+            console.log('Sending registration request for:', email);
+
             const response = await fetch('auth/register', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
                 body: JSON.stringify({ email, password, companyName })
             });
-            const data = await response.json();
+
+            // Debug: Log the raw response
+            console.log('Response status:', response.status);
+            console.log('Response ok:', response.ok);
+            
+            let data;
+            const responseText = await response.text();
+            console.log('Raw response text:', responseText);
+            
+            try {
+                data = JSON.parse(responseText);
+                console.log('Parsed response data:', data);
+            } catch (parseError) {
+                console.error('Error parsing response:', parseError);
+                data = { error: responseText };
+            }
+
             if (!response.ok) {
-                throw new Error(data.message || 'Signup failed.');
+                // Debug: Log error details
+                console.error('Registration failed:', {
+                    status: response.status,
+                    statusText: response.statusText,
+                    data: data
+                });
+
+                let errorMsg = 'Signup failed';
+                if (data && typeof data === 'object') {
+                    errorMsg = data.error || data.message || data.errorMessage || errorMsg;
+                } else if (typeof data === 'string') {
+                    errorMsg = data;
+                }
+                
+                throw new Error(errorMsg);
             }
 
             if (data.apiKey && data.ingestUrl) {

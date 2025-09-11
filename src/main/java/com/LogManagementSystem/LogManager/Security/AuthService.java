@@ -5,6 +5,8 @@ import com.LogManagementSystem.LogManager.Entity.Tenant;
 import com.LogManagementSystem.LogManager.Entity.User;
 import com.LogManagementSystem.LogManager.Repository.TenantRepository;
 import com.LogManagementSystem.LogManager.Repository.UserRepository;
+import com.LogManagementSystem.LogManager.Security.Exception.EmailInUserException;
+import com.LogManagementSystem.LogManager.Security.Exception.InvalidEmailException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -32,15 +34,13 @@ public class AuthService {
     private static final Pattern EMAIL_PATTERN = Pattern.compile(EMAIL_REGEX);
 
     public AuthenticationResponse register(RegisterRequest request){
+        System.out.println(request.getEmail());
         if(!EMAIL_PATTERN.matcher(request.getEmail()).matches()){
-            return AuthenticationResponse.builder()
-                    .error("Invalid Email format")
-                    .build();
+            throw new InvalidEmailException(request.getEmail());
         }
         if(userRepository.existsByEmail(request.getEmail())){
-            return AuthenticationResponse.builder()
-                    .error("Email already in use")
-                    .build();
+            System.err.println("Email already in use");
+            throw new EmailInUserException(request.getEmail());
         }
         final boolean[] companyExits = {true};
         Tenant tenant = tenantRepository.findByCompanyName(request.getCompanyName())
@@ -65,6 +65,7 @@ public class AuthService {
 
         userRepository.save(user);
         var jwtToken = jwtService.generateToken(user);
+        System.out.println("successfully registration");
         return AuthenticationResponse.builder()
                 .token(jwtToken)
                 .apiKey(companyExits[0] ? null : tenant.getApiTokenHash())

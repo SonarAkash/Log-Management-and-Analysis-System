@@ -25,9 +25,9 @@ public class IngestController {
 
     private final FileWalAppender fileWalAppender;
     private final ActiveClient activeClient;
-    private ExecutorService executorService;
-    private ParserDecider parserDecider;
-    private SimpMessagingTemplate template;
+    private final ExecutorService executorService;
+    private final ParserDecider parserDecider;
+    private final SimpMessagingTemplate template;
 
     public IngestController(FileWalAppender fileWalAppender, ActiveClient activeClient, ParserDecider parserDecider, @Lazy SimpMessagingTemplate template) {
         this.fileWalAppender = fileWalAppender;
@@ -43,7 +43,7 @@ public class IngestController {
                                             @RequestBody String rawLog){
         String timestamp = String.valueOf(Instant.now());
         UUID tenantId =  (UUID) request.getAttribute("tenantId");
-        System.out.println("received logs");
+//        System.out.println("received logs");
         if(activeClient.containsClient(tenantId)){
             executorService.submit(new StreamLogs(tenantId, rawLog));
         }
@@ -63,19 +63,19 @@ public class IngestController {
         String userEmail = authentication.getName();
         User userDetails = (User) authentication.getPrincipal();
 
-        // Construct the same destination the client UI is subscribed to
+        // The same destination the client UI is subscribed to
         String destination = "/queue/stream/";
         String payload = "{\"type\":\"TEST\", \"payload\":\"This is a direct test message sent at " + Instant.now() + "\"}";
 
-        System.out.println(">>> Sending TEST message from controller to: " + destination);
+//        System.out.println(">>> Sending TEST message from controller to: " + destination);
         template.convertAndSend(destination, payload);
 
         return ResponseEntity.ok("Test message sent to user: " + userEmail);
     }
 
     class StreamLogs implements Runnable{
-        private UUID tenantId;
-        private String log;
+        private final UUID tenantId;
+        private final String log;
         public StreamLogs(UUID tenantId, String log){
             this.tenantId = tenantId;
             this.log = log;
@@ -85,7 +85,7 @@ public class IngestController {
             String email = activeClient.getClientEmail(tenantId);
             String logType = parserDecider.determineLogType(log).name();
             String destination =  "/queue/stream/" + tenantId.toString();
-            System.out.println("sending logs to  " + email + " " + tenantId);
+//            System.out.println("sending logs to  " + email + " " + tenantId);
             template.convertAndSend(
                     destination,
                     LogMessage.builder()

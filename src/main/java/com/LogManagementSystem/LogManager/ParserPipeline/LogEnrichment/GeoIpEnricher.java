@@ -47,7 +47,6 @@ public class GeoIpEnricher {
         // Use Spring's ResourceLoader to get a handle to the resource
         Resource resource = resourceLoader.getResource("classpath:GeoLite2-City.mmdb");
 
-        // Use a try-with-resources block to safely open and close the InputStream
         try (InputStream dbStream = resource.getInputStream()) {
             // Build the DatabaseReader from the stream of data
             dbReader = new DatabaseReader.Builder(dbStream).build();

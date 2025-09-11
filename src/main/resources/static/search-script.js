@@ -90,23 +90,64 @@ document.addEventListener('DOMContentLoaded', () => {
         history.pushState({ page }, '', `search.html?${browserParams.toString()}`);
 
         try {
+            // Debug: Log the search request
+            console.log('Sending search request:', {
+                url,
+                body,
+                page: currentSearchState.page
+            });
+
             const response = await fetch(url, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${jwtToken}`,
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
                 },
                 body: JSON.stringify(body)
             });
 
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || `Search failed with status: ${response.status}`);
+            // Debug: Log the raw response
+            console.log('Response status:', response.status);
+            console.log('Response ok:', response.ok);
+            
+            let data;
+            const responseText = await response.text();
+            console.log('Raw response text:', responseText);
+            
+            try {
+                data = JSON.parse(responseText);
+                console.log('Parsed response data:', data);
+            } catch (parseError) {
+                console.error('Error parsing response:', parseError);
+                data = { error: responseText };
             }
-            const data = await response.json();
+
+            if (!response.ok) {
+                // Debug: Log error details
+                console.error('Search failed:', {
+                    status: response.status,
+                    statusText: response.statusText,
+                    data: data
+                });
+
+                let errorMsg;
+                if (data && data.error) {
+                    errorMsg = data.error;  // Use the exact error message from the response
+                } else if (data && typeof data === 'object') {
+                    errorMsg = data.message || data.errorMessage || 'Search failed';
+                } else if (typeof data === 'string') {
+                    errorMsg = data;
+                } else {
+                    errorMsg = `Search failed with status: ${response.status}`;
+                }
+                
+                throw new Error(errorMsg);
+            }
+
             renderResults(data);
         } catch (error) {
-            console.error(error);
+            console.error('Search error:', error);
             showNotification(error.message);
             showState('initial');
         }

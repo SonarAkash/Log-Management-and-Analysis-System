@@ -14,9 +14,9 @@ import java.util.Map;
 @Service
 public class JsonParser implements Log{
 
-    private BindFields bindFields;
+    private final BindFields bindFields;
 
-    private LogEventEnrichment logEventEnrichment;
+    private final LogEventEnrichment logEventEnrichment;
 
 
     public JsonParser(LogEventEnrichment logEventEnrichment, BindFields bindFields) {

@@ -35,9 +35,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String jwt;
         final String username;
 
-        System.out.println("\n--- JWT FILTER DEBUG ---");
-        System.out.println("Request Path: " + request.getServletPath());
-        System.out.println("Authorization Header: " + request.getHeader("Authorization"));
+//        System.out.println("\n--- JWT FILTER DEBUG ---");
+//        System.out.println("Request Path: " + request.getServletPath());
+//        System.out.println("Authorization Header: " + request.getHeader("Authorization"));
 
 
         if(authHeader == null || !authHeader.startsWith("Bearer ")){
@@ -50,7 +50,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             username = jwtService.extractUsername(jwt);
         } catch (Exception e) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("Invalid or expired token " + e);
+            response.getWriter().write("Invalid or expired token : " + e);
             return;
         }
         if(username != null && SecurityContextHolder.getContext().getAuthentication() == null){
@@ -63,6 +63,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 );
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
+            }else{
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.getWriter().write("Expired token");
+                return;
             }
         }
         filterChain.doFilter(request, response);
