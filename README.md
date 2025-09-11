@@ -40,7 +40,7 @@ A high-performance, log management and analysis system built with Spring Boot an
   - Spring Data JPA
   - PostgreSQL 15
   - JWT Authentication
-  - MaxMind GeoIP2
+  - MaxMind GeoIP2 (CLICK ON THE [LINK](https://www.maxmind.com/en/home) TO DOWNLOAD : GeoLite2-City_20250815.tar.gz, and place it in resources folder)
   - YAUAA (User Agent Analysis)
 
 - **Frontend**:
