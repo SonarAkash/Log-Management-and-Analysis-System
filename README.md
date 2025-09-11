@@ -59,7 +59,7 @@ A high-performance, log management and analysis system built with Spring Boot an
 - Java Development Kit (JDK) 21
 - Docker and Docker Compose
 - Maven
-- PostgreSQL 15 (if running locally)
+- PostgreSQL 15 (if running locally, plz make sure to insert the initial query in db given in root folder i.e. **init.sql** before running the application)
 - Git
 
 ## 🚀 Installation & Setup
@@ -75,8 +75,18 @@ A high-performance, log management and analysis system built with Spring Boot an
    mvn clean package -DskipTests
    ```
 
-3. **Run with Docker Compose** (Recommended)
+3. **Set up environment variables** (Required)
    ```bash
+   # Copy the example environment file
+   cp .env.example .env
+
+   # Edit .env file with your secure values
+   nano .env   # or use your preferred text editor
+   ```
+
+4. **Run with Docker Compose** (Recommended)
+   ```bash
+   # Make sure you have created and configured your .env file first!
    docker-compose up -d
    ```
 
@@ -84,6 +94,8 @@ A high-performance, log management and analysis system built with Spring Boot an
    - PostgreSQL database
    - LogFlux application
    - k6 load testing service (optional)
+
+   Note: The .env file contains sensitive information and is git-ignored. Never commit it to version control!
 
 4. **Run Locally** (Alternative)
    - Configure your PostgreSQL database
@@ -97,24 +109,40 @@ A high-performance, log management and analysis system built with Spring Boot an
 
 ### Environment Variables
 
+Required environment variables are defined in `.env.example`. Create your own `.env` file with actual values:
+
 ```properties
 # Database Configuration
-SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/log_management
-SPRING_DATASOURCE_USERNAME=your_username
-SPRING_DATASOURCE_PASSWORD=your_password
+DB_USER=your_username
+DB_PASSWORD=your_secure_password
+DB_NAME=log_management
+DB_PORT=5432
 
 # Application Configuration
-SPRING_PROFILES_ACTIVE=dev
-LOG_INGESTION_WAL_PATH=/path/to/wal
-LOG_MANAGER_SECURE_KEY=your_secure_key
+APP_PORT=8080
+SPRING_PROFILE=prod
+TIMEZONE=Asia/Kolkata
+
+# Security
+SECURE_KEY=your_base64_encoded_secure_key
+K6_API_TOKEN=your_k6_api_token
 ```
 
-### Properties Files
+## ⚠️ Important Security Notes
+- Never commit the actual `.env` file to version control
+- Use strong, unique passwords in production
+- The `SECURE_KEY` should be a base64-encoded secret key
+- Rotate the `K6_API_TOKEN` periodically
+- Use different credentials for development and production environments
+---
+
+### 📂 Properties Files
 
 - `application.properties`: Base configuration
 - `application-dev.properties`: Development profile
 - `application-prod.properties`: Production profile
 
+---
 ## 📖 API Documentation
 
 Access the OpenAPI documentation at:

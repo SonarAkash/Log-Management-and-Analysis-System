@@ -1,39 +1,37 @@
-version: '3.8' # Specifies the version of the Docker Compose file format
+version: '3.8'
 
 services:
-
   postgres:
     image: postgres:15
     container_name: log-manager-db
     environment:
-      POSTGRES_USER: Akash_Sonar
-      POSTGRES_PASSWORD: Akash@3119
-      POSTGRES_DB: log_management
-      TZ: Asia/Kolkata       # Set timezone environment variable
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+      TZ: ${TIMEZONE}
     volumes:
       - postgres-data:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - "${DB_PORT}:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U Akash_Sonar -d log_management"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
       interval: 10s
       timeout: 5s
       retries: 5
     command: >
       bash -c "apt-get update && apt-get install -y tzdata && docker-entrypoint.sh postgres"
 
-    # 2.Log Management Application Service
   log-service:
     build: .
     ports:
-      - "8080:8080"
+      - "${APP_PORT}:8080"
     environment:
-      - SPRING_PROFILES_ACTIVE=prod
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/log_management
-      - SPRING_DATASOURCE_USERNAME=Akash_Sonar
-      - SPRING_DATASOURCE_PASSWORD=Akash@3119
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILE}
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/${DB_NAME}
+      - SPRING_DATASOURCE_USERNAME=${DB_USER}
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
       - LOG_INGESTION_WAL_PATH=/app/data/wal/
-      - LOG_MANAGER_SECURE_KEY=NWUgZGUgZDcgODcgMjcgZTUgMDEgMzQgZjYgOTggZjAgZTkgMmIgYTIgYjMgMzkgCjYzIGUyIDI1IDFiIGY1IDU5IDc4IGRkIDhkIGQwIGJhIDg0IDIwIDFkIDRlIGQ3IAo0ZiA3MiBmNyBlOSAyYSA2YiA3YiAyOCBmNSA2NiA5ZiA1NiBlNiA1ZiAzYSAyNyA=
+      - LOG_MANAGER_SECURE_KEY=${SECURE_KEY}
       - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=health
     volumes:
       - ./target/wal:/app/data/wal
@@ -47,15 +45,14 @@ services:
       retries: 5
       start_period: 30s
 
-  # 3. The k6 Load Testing Service
   k6:
     image: grafana/k6
     command: run /scripts/test.js
     volumes:
       - ./k6:/scripts
     environment:
-      - API_TARGET=http://log-service:8080
-      - API_TOKEN=8g7HVTEyueAWIOjF6dwS2lBCE3cuAyOmTbhSmmkUQP4
+      - API_TARGET=http://log-service:${APP_PORT}
+      - API_TOKEN=${K6_API_TOKEN}
     depends_on:
       log-service:
         condition: service_healthy
