@@ -41,7 +41,10 @@ public class SecurityConfig {
                                 "/*.css",
                                 "/*.js",
                                 "/favicon.ico",
-                                "/websocket-connect/**" ).permitAll()
+                                "/websocket-connect/**" ,
+                                "/swagger-ui.html",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**").permitAll()
                         //only temporary
 //                        .requestMatchers("/subscribe-stream").authenticated()
                         .anyRequest().authenticated()
