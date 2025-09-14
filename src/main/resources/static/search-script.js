@@ -24,12 +24,31 @@ document.addEventListener('DOMContentLoaded', () => {
         userEmailDisplay.textContent = payload.sub;
     } catch (e) { window.location.href = 'auth.html'; }
 
-     const datepicker = new Litepicker({
-            element: daterangeInput,
-            singleMode: false,
-            timePicker: true,
-            format: 'YYYY-MM-DD hh:mm A' // Example: 2025-09-24 10:30 AM
-        });
+     // Initialize datepicker with error handling
+     let datepicker;
+     try {
+         if (typeof Litepicker === 'undefined') {
+             throw new Error('Litepicker is not loaded yet. Please try refreshing the page.');
+         }
+         datepicker = new Litepicker({
+             element: daterangeInput,
+             singleMode: false,
+             timePicker: false, // Disable time picker as we're handling time separately
+             format: 'MMM D, YYYY', // User-friendly date format
+             tooltipText: { one: 'day', other: 'days' },
+             numberOfMonths: 2,
+             numberOfColumns: 2,
+             setup: (picker) => {
+                 console.log('Litepicker initialized successfully');
+             },
+             tooltipNumber: (totalDays) => {
+                 return totalDays;
+             }
+         });
+     } catch (error) {
+         console.error('Error initializing Litepicker:', error);
+         showNotification('Date picker initialization failed. Some features may be limited.');
+     }
 
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.has('q')) {
@@ -63,14 +82,37 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         showState('loading');
 
-        const startDate = datepicker.getStartDate();
-        const endDate = datepicker.getEndDate();
+        let startDate = null;
+        let endDate = null;
+        
+        try {
+            if (datepicker) {
+                const start = datepicker.getStartDate();
+                const end = datepicker.getEndDate();
+                
+                if (start) {
+                    // Convert to JavaScript Date object and set time to start of day
+                    const startJsDate = new Date(start.getTime());
+                    startJsDate.setHours(0, 0, 0, 0);
+                    startDate = startJsDate.toISOString();
+                }
+                
+                if (end) {
+                    // Convert to JavaScript Date object and set time to end of day
+                    const endJsDate = new Date(end.getTime());
+                    endJsDate.setHours(23, 59, 59, 999);
+                    endDate = endJsDate.toISOString();
+                }
+            }
+        } catch (error) {
+            console.error('Error formatting dates:', error);
+        }
 
         currentSearchState = {
             query: lsqlInput.value.trim(),
             page: page,
-            start: startDate ? startDate.toJSDate().toISOString() : null,
-            end: endDate ? endDate.toJSDate().toISOString() : null
+            start: startDate,
+            end: endDate
         };
 
         const url = `logs/search?page=${currentSearchState.page}&size=${PAGE_SIZE}`;

@@ -21,23 +21,6 @@ public class AuthController {
     private final JwtService jwtService;
     private final AuthService authService;
 
-    @PostMapping("/register")
-    public ResponseEntity<AuthenticationResponse> register(@Valid @RequestBody RegisterRequest request){
-//        try {
-//            return ResponseEntity.ok(authService.register(request));
-//        } catch (Exception e) {
-//            System.err.println("Registration failed : " + e.getMessage());
-//            return ResponseEntity.
-//                    status(HttpStatus.BAD_REQUEST)
-//                    .body(AuthenticationResponse.builder()
-//                    .error(e.getMessage())
-//                    .build()
-//            );
-//        }
-        return ResponseEntity.ok(authService.register(request));
-
-    }
-
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> login(@RequestBody AuthenticationRequest request){
         try {

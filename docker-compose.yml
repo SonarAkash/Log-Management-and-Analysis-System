@@ -21,6 +21,19 @@ services:
     command: >
       bash -c "apt-get update && apt-get install -y tzdata && docker-entrypoint.sh postgres"
 
+  redis:
+    image: redis:latest
+    container_name: log-manager-redis
+    ports:
+      - "${REDIS_PORT}:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   log-service:
     build: .
     ports:
@@ -31,12 +44,21 @@ services:
       - SPRING_DATASOURCE_USERNAME=${DB_USER}
       - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
       - LOG_INGESTION_WAL_PATH=/app/data/wal/
-      - LOG_MANAGER_SECURE_KEY=${SECURE_KEY}
+      - SECURE_KEY=${SECURE_KEY}
       - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=health
+      - SPRING_REDIS_HOST=redis
+      - SPRING_REDIS_PORT=${REDIS_PORT}
+      # SMTP Configuration
+      - SPRING_MAIL_HOST=${SMTP_HOST}
+      - SPRING_MAIL_PORT=${SMTP_PORT}
+      - SPRING_MAIL_USERNAME=${SMTP_USERNAME}
+      - SPRING_MAIL_PASSWORD=${SMTP_PASSWORD}
     volumes:
       - ./target/wal:/app/data/wal
     depends_on:
       postgres:
+        condition: service_healthy
+      redis:
         condition: service_healthy
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8080/actuator/health" ]
@@ -61,3 +83,4 @@ services:
 # This defines the named volume used above, letting Docker manage it
 volumes:
   postgres-data:
+  redis-data:

@@ -58,12 +58,3 @@ CREATE INDEX idx_logs_attrs_gin ON logs USING GIN (attrs);
 CREATE INDEX idx_logs_message_tsv_gin ON logs USING GIN (message_tsv);
 CREATE INDEX idx_logs_attrs_fts ON logs USING GIN (jsonb_to_tsvector('english', attrs, '["string"]'));
 
-
-
---INSERT INTO tenants (id, company_name, api_token_hash, created_at)
---VALUES (
---    'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
---    'Dummy Company',
---    crypt('my-secret-token', gen_salt('bf')),
---    NOW()
---);

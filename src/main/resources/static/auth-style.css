@@ -52,6 +52,26 @@ body {
     transition: background-color 0.2s;
 }
 
+.form-container button:hover {
+    background-color: var(--accent-secondary);
+}
+
+.form-container button[type="button"] {
+    background-color: var(--bg-medium);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+.form-container button[type="button"]:hover {
+    background-color: var(--bg-dark);
+}
+
+#signup-otp {
+    letter-spacing: 4px;
+    font-size: 20px;
+    text-align: center;
+}
+
 .form-container a {
     color: var(--accent-primary);
     text-decoration: none;

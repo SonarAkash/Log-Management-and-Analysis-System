@@ -16,8 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const email = document.getElementById('login-email').value;
         const password = document.getElementById('login-password').value;
         try {
-            // Debug: Log the login attempt
-            console.log('Attempting login for:', email);
+            // console.log('Attempting login for:', email);
 
             const response = await fetch('auth/login', {
                 method: 'POST',
@@ -25,37 +24,37 @@ document.addEventListener('DOMContentLoaded', () => {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json'
                 },
-                body: JSON.stringify({ email, password })
+                body: JSON.stringify({
+                    email: email,
+                    password: password
+                })
             });
 
-            // Debug: Log the raw response
-            console.log('Response status:', response.status);
-            console.log('Response ok:', response.ok);
+            // console.log('Response status:', response.status);
+            // console.log('Response ok:', response.ok);
             
             let data;
             const responseText = await response.text();
-            console.log('Raw response text:', responseText);
+            // console.log('Raw response text:', responseText);
             
             try {
                 data = JSON.parse(responseText);
-                console.log('Parsed response data:', data);
+                // console.log('Parsed response data:', data);
             } catch (parseError) {
-                console.error('Error parsing response:', parseError);
+                // console.error('Error parsing response:', parseError);
                 data = { error: responseText };
             }
 
-            if (!response.ok || !data.token) {  // Check both response.ok and if token exists
-                // Debug: Log error details
-                console.error('Login failed:', {
-                    status: response.status,
-                    statusText: response.statusText,
-                    data: data
-                });
+            if (!response.ok || !data.token) {
+                // console.error('Login failed:', {
+                //     status: response.status,
+                //     statusText: response.statusText,
+                //     data: data
+                // });
 
-                // Specifically check for the error field in the response
                 let errorMsg;
                 if (data && data.error) {
-                    errorMsg = data.error;  // Use the exact error message from the response
+                    errorMsg = data.error; 
                 } else if (data && typeof data === 'object') {
                     errorMsg = data.message || data.errorMessage || 'Login failed';
                 } else if (typeof data === 'string') {
@@ -67,7 +66,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error(errorMsg);
             }
 
-            // If login successful, store token and redirect
             localStorage.setItem('jwtToken', data.token);
             window.location.href = 'dashboard.html';
         } catch (error) {
@@ -75,47 +73,103 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    signupForm.addEventListener('submit', async (e) => {
+    const signupInitiateForm = document.getElementById('signup-initiate-form');
+    const signupCompleteForm = document.getElementById('signup-complete-form');
+    const resendOtpBtn = document.getElementById('resend-otp-btn');
+    let registrationEmail = '';
+
+    function isValidEmail(email) {
+        // RFC 5322 compliant email regex
+        const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+        return emailRegex.test(email) && !email.includes('.@') && !email.endsWith('.');
+    }
+
+    signupInitiateForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const email = document.getElementById('signup-email').value;
+        const submitBtn = signupInitiateForm.querySelector('button[type="submit"]');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = 'Sending OTP...';
+
+        registrationEmail = document.getElementById('signup-email').value.trim();
         const password = document.getElementById('signup-password').value;
         const companyName = document.getElementById('signup-company').value;
-        try {
-            // Debug: Log the request
-            console.log('Sending registration request for:', email);
 
-            const response = await fetch('auth/register', {
+        if (!isValidEmail(registrationEmail)) {
+            showNotification('Please enter a valid email address');
+            return;
+        }
+        
+        sessionStorage.setItem('tempPassword', password);
+        sessionStorage.setItem('tempCompanyName', companyName);
+
+        try {
+            const response = await fetch('api/auth/register/initiate?email=' + encodeURIComponent(registrationEmail), {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const data = await response.json();
+            
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to initiate registration');
+            }
+
+            signupInitiateForm.style.display = 'none';
+            signupCompleteForm.style.display = 'block';
+            showNotification('OTP sent to your email!', 'success');
+        } catch (error) {
+            showNotification(error.message);
+        } finally {
+            const submitBtn = signupInitiateForm.querySelector('button[type="submit"]');
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = 'Get OTP';
+        }
+    });
+
+    signupCompleteForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const otp = document.getElementById('signup-otp').value;
+        const password = sessionStorage.getItem('tempPassword');
+        const companyName = sessionStorage.getItem('tempCompanyName');
+        try {
+            // console.log('Sending registration completion request for:', registrationEmail);
+
+            const response = await fetch(`api/auth/register/complete?email=${encodeURIComponent(registrationEmail)}&otp=${encodeURIComponent(otp)}`, {
                 method: 'POST',
                 headers: { 
                     'Content-Type': 'application/json',
                     'Accept': 'application/json'
                 },
-                body: JSON.stringify({ email, password, companyName })
+                body: JSON.stringify({ 
+                    email: registrationEmail,
+                    password: password,
+                    companyName: companyName
+                })
             });
 
-            // Debug: Log the raw response
-            console.log('Response status:', response.status);
-            console.log('Response ok:', response.ok);
+            // console.log('Response status:', response.status);
+            // console.log('Response ok:', response.ok);
             
             let data;
             const responseText = await response.text();
-            console.log('Raw response text:', responseText);
+            // console.log('Raw response text:', responseText);
             
             try {
                 data = JSON.parse(responseText);
-                console.log('Parsed response data:', data);
+                // console.log('Parsed response data:', data);
             } catch (parseError) {
-                console.error('Error parsing response:', parseError);
+                // console.error('Error parsing response:', parseError);
                 data = { error: responseText };
             }
 
             if (!response.ok) {
-                // Debug: Log error details
-                console.error('Registration failed:', {
-                    status: response.status,
-                    statusText: response.statusText,
-                    data: data
-                });
+                // console.error('Registration failed:', {
+                //     status: response.status,
+                //     statusText: response.statusText,
+                //     data: data
+                // });
 
                 let errorMsg = 'Signup failed';
                 if (data && typeof data === 'object') {
@@ -127,21 +181,30 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error(errorMsg);
             }
 
+            sessionStorage.removeItem('tempPassword');
+            sessionStorage.removeItem('tempCompanyName');
+
+            signupInitiateForm.style.display = 'none';
+            signupCompleteForm.style.display = 'none';
+
             if (data.apiKey && data.ingestUrl) {
                 // Scenario 1: First user of a new tenant
-                document.getElementById('signup-form').style.display = 'none';
                 document.getElementById('api-key-value').textContent = data.apiKey;
                 document.getElementById('ingest-url-value').textContent = data.ingestUrl;
                 apiKeyDisplay.style.display = 'block';
+                showNotification('Registration successful! Please save your API key.', 'success');
 
+                // Add click handlers for copy buttons and login button
                 document.getElementById('copy-key-btn').addEventListener('click', () => copyToClipboard(data.apiKey, 'API Key'));
                 document.getElementById('copy-url-btn').addEventListener('click', () => copyToClipboard(data.ingestUrl, 'Ingest URL'));
-                document.getElementById('go-to-login-btn').addEventListener('click', () => showView('login-view'));
-
+                document.getElementById('go-to-login-btn').onclick = () => {
+                    apiKeyDisplay.style.display = 'none';
+                    showView('login-view');
+                };
             } else {
                 // Scenario 2: Subsequent user of an existing tenant
-                showNotification('Signup successful! Please log in.', 'success');
-                showView('login-view');
+                showNotification('Registration successful! Please log in.', 'success');
+                setTimeout(() => showView('login-view'), 2000);
             }
 
         } catch (error) {
@@ -150,11 +213,23 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function showView(viewId) {
-        if(viewId === 'login-view') {
-            document.getElementById('signup-form').style.display = 'block';
-            apiKeyDisplay.style.display = 'none';
-        }
         document.querySelectorAll('.view').forEach(v => v.style.display = 'none');
+        
+        if(viewId === 'login-view') {
+            signupInitiateForm.style.display = 'block';
+            signupCompleteForm.style.display = 'none';
+            apiKeyDisplay.style.display = 'none';
+            
+            document.getElementById('signup-email').value = '';
+            document.getElementById('signup-password').value = '';
+            document.getElementById('signup-company').value = '';
+            document.getElementById('signup-otp').value = '';
+            
+            sessionStorage.removeItem('tempPassword');
+            sessionStorage.removeItem('tempCompanyName');
+            registrationEmail = '';
+        }
+        
         document.getElementById(viewId).style.display = 'flex';
     }
 
@@ -171,7 +246,33 @@ document.addEventListener('DOMContentLoaded', () => {
             showNotification(`${type} copied to clipboard!`, 'success');
         }, (err) => {
             showNotification(`Failed to copy ${type}.`);
-            console.error('Async: Could not copy text: ', err);
+            // console.error('Async: Could not copy text: ', err);
         });
     }
+
+    resendOtpBtn.addEventListener('click', async () => {
+        resendOtpBtn.disabled = true;
+        resendOtpBtn.innerHTML = 'Sending...';
+        try {
+            const response = await fetch('api/auth/register/resend-otp?email=' + encodeURIComponent(registrationEmail), {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const data = await response.json();
+            
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to resend OTP');
+            }
+
+            showNotification('New OTP sent to your email!', 'success');
+        } catch (error) {
+            showNotification(error.message);
+        } finally {
+            resendOtpBtn.disabled = false;
+            resendOtpBtn.innerHTML = 'Resend OTP';
+        }
+    });
 });

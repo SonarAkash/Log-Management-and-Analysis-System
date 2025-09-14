@@ -56,8 +56,10 @@ public class ParserDecider {
         LogEvent logEvent = new LogEvent();
 
         try{
+//            System.out.println(log);
             int start = log.indexOf("["), end = log.indexOf("]");
             UUID tenantId = UUID.fromString(log.substring(start + 1, end));
+//            System.out.println("parsed uuid : " + tenantId);
             log = log.substring(end + 1);
             start = log.indexOf("[");
             end = log.indexOf("]");

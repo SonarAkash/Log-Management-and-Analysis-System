@@ -1,6 +1,5 @@
 package com.LogManagementSystem.LogManager.Security;
 
-import jakarta.validation.constraints.Email;
 import lombok.*;
 
 @Getter @Setter

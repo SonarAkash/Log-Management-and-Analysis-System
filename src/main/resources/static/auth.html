@@ -25,11 +25,17 @@
 <div id="signup-view" class="view" style="display: none;">
   <div class="form-container">
     <h2>Create Your Account</h2>
-    <form id="signup-form">
+    <form id="signup-initiate-form">
       <input type="email" id="signup-email" placeholder="Email" required>
       <input type="password" id="signup-password" placeholder="Password" required>
       <input type="text" id="signup-company" placeholder="Company Name" required>
+      <button type="submit">Get Verification Code</button>
+    </form>
+
+    <form id="signup-complete-form" style="display: none;">
+      <input type="text" id="signup-otp" placeholder="Enter OTP from email" required maxlength="6" pattern="[0-9]{6}">
       <button type="submit">Create Account</button>
+      <button type="button" id="resend-otp-btn">Resend OTP</button>
     </form>
 
     <div id="api-key-display" class="api-key-container" style="display: none;">

@@ -136,6 +136,35 @@ document.querySelectorAll('pre code').forEach(block => {
         block.style.background = 'none';
     });
 });
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    
+    const token = localStorage.getItem('jwtToken');
+    if (!token) {
+        window.location.href = 'auth.html';
+        return;
+    }
+
+   
+    const logoutButton = document.getElementById('logout-button');
+    logoutButton.addEventListener('click', () => {
+        localStorage.removeItem('jwtToken');
+        window.location.href = 'auth.html';
+    });
+
+    const userEmailDisplay = document.getElementById('user-email-display');
+    if (userEmailDisplay) {
+        try {
+            const payload = JSON.parse(atob(token.split('.')[1]));
+            if (payload.sub) {
+                userEmailDisplay.textContent = payload.sub;
+            }
+        } catch (error) {
+            console.error('Error parsing JWT:', error);
+        }
+    }
+});
 </script>
 
 </body>

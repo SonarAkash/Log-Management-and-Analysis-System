@@ -43,6 +43,7 @@ public class IngestController {
                                             @RequestBody String rawLog){
         String timestamp = String.valueOf(Instant.now());
         UUID tenantId =  (UUID) request.getAttribute("tenantId");
+//        System.out.println("UUID : " + tenantId);
 //        System.out.println("received logs");
         if(activeClient.containsClient(tenantId)){
             executorService.submit(new StreamLogs(tenantId, rawLog));

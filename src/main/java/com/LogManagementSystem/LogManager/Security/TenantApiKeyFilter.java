@@ -56,6 +56,7 @@ public class TenantApiKeyFilter extends OncePerRequestFilter {
         SecurityContextHolder.getContext().setAuthentication(tenantAuth);
 
         request.setAttribute("tenantId", tenant.getId());
+//        System.out.println("token : "+ tenant.getApiTokenHash() + " , company : " + tenant.getCompanyName());
 
         filterChain.doFilter(request, response);
     }

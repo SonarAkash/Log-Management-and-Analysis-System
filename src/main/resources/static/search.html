@@ -60,6 +60,14 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/litepicker/dist/bundle.js"></script>
+<script>
+  // Wait for Litepicker to load
+  window.addEventListener('load', function() {
+    if (typeof Litepicker === 'undefined') {
+      console.error('Litepicker failed to load. Please check your internet connection.');
+    }
+  });
+</script>
 <script src="search-script.js"></script>
 </body>
 </html>
