@@ -34,3 +34,6 @@ build/
 
 ### GeoLite2 Database ###
 **/GeoLite2-City.mmdb
+
+### Environment Files ###
+.env
