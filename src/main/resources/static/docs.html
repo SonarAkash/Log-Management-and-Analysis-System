@@ -4,10 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>LSQL Guide - LogFlux</title>
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="livetail-style.css">
-  <link rel="stylesheet" href="search-style.css">
-  <link rel="stylesheet" href="docs-style.css">
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/livetail-style.css">
+  <link rel="stylesheet" href="/search-style.css">
+  <link rel="stylesheet" href="/docs-style.css">
 </head>
 <body class="app-body">
 <div id="notification" class="notification"></div>
@@ -15,10 +15,10 @@
 <header class="main-header">
   <div class="logo">LogFlux</div>
   <nav>
-    <a href="dashboard.html">Dashboard</a>
-    <a href="livetail.html">Live Tail</a>
-    <a href="search.html">Search</a>
-    <a href="docs.html" class="active">LSQL Guide</a>
+  <a href="/dashboard.html">Dashboard</a>
+  <a href="/livetail.html">Live Tail</a>
+  <a href="/search.html">Search</a>
+  <a href="/docs.html" class="active">LSQL Guide</a>
   </nav>
   <div class="user-controls">
     <span id="user-email-display"></span>
@@ -142,7 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const token = localStorage.getItem('jwtToken');
     if (!token) {
-        window.location.href = 'auth.html';
+  window.location.href = '/auth.html';
         return;
     }
 
@@ -150,7 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const logoutButton = document.getElementById('logout-button');
     logoutButton.addEventListener('click', () => {
         localStorage.removeItem('jwtToken');
-        window.location.href = 'auth.html';
+  window.location.href = '/auth.html';
     });
 
     const userEmailDisplay = document.getElementById('user-email-display');

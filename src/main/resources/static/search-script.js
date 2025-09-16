@@ -18,11 +18,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const userEmailDisplay = document.getElementById('user-email-display');
     const notification = document.getElementById('notification');
 
-    if (!jwtToken) { window.location.href = 'auth.html'; return; }
+    if (!jwtToken) { window.location.href = '/auth.html'; return; }
     try {
         const payload = JSON.parse(atob(jwtToken.split('.')[1]));
         userEmailDisplay.textContent = payload.sub;
-    } catch (e) { window.location.href = 'auth.html'; }
+    } catch (e) { window.location.href = '/auth.html'; }
 
      // Initialize datepicker with error handling
      let datepicker;
@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
     nextButton.addEventListener('click', () => performSearch(currentSearchState.page + 1));
     logoutButton.addEventListener('click', () => {
         localStorage.removeItem('jwtToken');
-        window.location.href = 'index.html';
+        window.location.href = '/index.html';
     });
     resultsContainer.addEventListener('click', (e) => {
         const summary = e.target.closest('.log-json-summary');
@@ -115,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
             end: endDate
         };
 
-        const url = `logs/search?page=${currentSearchState.page}&size=${PAGE_SIZE}`;
+        const url = `/logs/search?page=${currentSearchState.page}&size=${PAGE_SIZE}`;
 
         const body = {
             q: currentSearchState.query,
@@ -129,7 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         if (currentSearchState.start) browserParams.append('start', currentSearchState.start);
         if (currentSearchState.end) browserParams.append('end', currentSearchState.end);
-        history.pushState({ page }, '', `search.html?${browserParams.toString()}`);
+            history.pushState({ page }, '', `/search.html?${browserParams.toString()}`);
 
         try {
             // Debug: Log the search request

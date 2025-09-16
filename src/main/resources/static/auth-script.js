@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             // console.log('Attempting login for:', email);
 
-            const response = await fetch('auth/login', {
+            const response = await fetch('/auth/login', {
                 method: 'POST',
                 headers: { 
                     'Content-Type': 'application/json',
@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             localStorage.setItem('jwtToken', data.token);
-            window.location.href = 'dashboard.html';
+            window.location.href = '/dashboard.html';
         } catch (error) {
             showNotification(error.message);
         }
@@ -103,7 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
         sessionStorage.setItem('tempCompanyName', companyName);
 
         try {
-            const response = await fetch('api/auth/register/initiate?email=' + encodeURIComponent(registrationEmail), {
+            const response = await fetch('/api/auth/register/initiate?email=' + encodeURIComponent(registrationEmail), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -136,7 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             // console.log('Sending registration completion request for:', registrationEmail);
 
-            const response = await fetch(`api/auth/register/complete?email=${encodeURIComponent(registrationEmail)}&otp=${encodeURIComponent(otp)}`, {
+            const response = await fetch(`/api/auth/register/complete?email=${encodeURIComponent(registrationEmail)}&otp=${encodeURIComponent(otp)}`, {
                 method: 'POST',
                 headers: { 
                     'Content-Type': 'application/json',
@@ -254,7 +254,7 @@ document.addEventListener('DOMContentLoaded', () => {
         resendOtpBtn.disabled = true;
         resendOtpBtn.innerHTML = 'Sending...';
         try {
-            const response = await fetch('api/auth/register/resend-otp?email=' + encodeURIComponent(registrationEmail), {
+            const response = await fetch('/api/auth/register/resend-otp?email=' + encodeURIComponent(registrationEmail), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

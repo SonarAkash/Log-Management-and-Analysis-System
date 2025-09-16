@@ -38,7 +38,7 @@ public class IngestController {
     }
 
 
-    @PostMapping("api/v1/ingest")
+    @PostMapping("/api/v1/ingest")
     public ResponseEntity<?> incomingLog(HttpServletRequest request,
                                             @RequestBody String rawLog){
         String timestamp = String.valueOf(Instant.now());

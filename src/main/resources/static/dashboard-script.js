@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const logoutButton = document.getElementById('logout-button');
 
     if (!jwtToken) {
-        window.location.href = 'auth.html';
+        window.location.href = '/auth.html';
         return; // Stop script execution
     }
 
@@ -14,11 +14,11 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (e) {
         console.error("Failed to decode JWT:", e);
         localStorage.removeItem('jwtToken');
-        window.location.href = 'auth.html';
+        window.location.href = '/auth.html';
     }
 
     logoutButton.addEventListener('click', () => {
         localStorage.removeItem('jwtToken');
-        window.location.href = 'index.html';
+        window.location.href = '/index.html';
     });
 });

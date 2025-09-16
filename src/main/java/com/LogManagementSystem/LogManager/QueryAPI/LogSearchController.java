@@ -31,7 +31,7 @@ public class LogSearchController {
     @Autowired
     private UserRepository userRepository;
 
-    @PostMapping("logs/search")
+    @PostMapping("/logs/search")
     public ResponseEntity<?> searchLogs(@Valid @RequestBody SearchRequestDTO queryDTO, Pageable pageable){
 //        System.out.println("HI");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

@@ -3,7 +3,7 @@ import { check } from 'k6';
 import { textSummary } from 'https://jslib.k6.io/k6-summary/0.0.2/index.js';
 
 const API_TARGET = __ENV.API_TARGET || 'http://localhost:8080';
-const API_TOKEN = __ENV.API_TOKEN || '8g7HVTEyueAWIOjF6dwS2lBCE3cuAyOmTbhSmmkUQP4';
+const API_TOKEN = __ENV.API_TOKEN || 'w7CY_y-lt0ja3HskjK2TSMdJ_ybMmg9oVDe7lOvX4no';
 const INGEST_URL = `${API_TARGET}/api/v1/ingest`;
 
 const SERVICES = ["payment-service", "user-service", "order-service"];

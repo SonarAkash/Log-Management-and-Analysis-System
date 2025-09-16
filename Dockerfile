@@ -1,9 +1,3 @@
-FROM ubuntu:latest
-LABEL authors="Akash"
-
-ENTRYPOINT ["top", "-b"]
-
-
 # === Stage 1: The Builder ===
 # An official Maven image to build the application JAR file.
 FROM maven:3.9.6-eclipse-temurin-21 AS builder

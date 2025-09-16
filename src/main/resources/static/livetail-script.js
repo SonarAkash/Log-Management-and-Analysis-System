@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const notification = document.getElementById('notification');
 
     if (!jwtToken) {
-        window.location.href = 'auth.html';
+        window.location.href = '/auth.html';
         return;
     }
 
@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
         userEmailDisplay.textContent = payload.sub;
     } catch (e) {
         console.error("Invalid JWT:", e);
-        window.location.href = 'auth.html';
+        window.location.href = '/auth.html';
     }
 
     connectWebSocket();
@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
     logoutButton.addEventListener('click', () => {
         localStorage.removeItem('jwtToken');
         if (stompClient) stompClient.deactivate();
-        window.location.href = 'index.html';
+        window.location.href = '/index.html';
     });
 
     clearButton.addEventListener('click', () => { logContainer.innerHTML = ''; });
@@ -108,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         stompClient.onConnect = (frame) => {
             updateConnectionStatus('Connected', 'status-connected');
-            fetch('subscribe-stream', {
+            fetch('/subscribe-stream', {
                 method: 'POST',
                 headers: { 'Authorization': `Bearer ${jwtToken}` }
             })
