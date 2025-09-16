@@ -171,8 +171,6 @@ K6_API_TOKEN=your_k6_api_token
 ```
 
 ## ⚠️ Important Security Notes
-- Never commit the actual `.env` file to version control
-- Use strong, unique passwords in production
 - The `SECURE_KEY` should be a base64-encoded secret key
 - Rotate the `K6_API_TOKEN` periodically
 - Use different credentials for development and production environments
