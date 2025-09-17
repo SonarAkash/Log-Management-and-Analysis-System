@@ -6,6 +6,8 @@ services:
     plan: free
     postgres:
       version: "15"
+      databaseName: "log_manager_db"
+      user: "db_user"
 
   # 2. The Redis Cache
   - type: pserv
