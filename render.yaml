@@ -23,6 +23,7 @@ services:
     runtime: docker
     dockerfilePath: ./Dockerfile
     healthCheckPath: /actuator/health
+    initialDelaySeconds: 60
     envVars:
       # --- Automatic Connection Details ---
       - key: SPRING_DATASOURCE_URL

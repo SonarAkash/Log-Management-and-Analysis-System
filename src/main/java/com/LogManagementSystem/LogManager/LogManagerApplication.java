@@ -18,3 +18,5 @@ public class LogManagerApplication {
 	}
 
 }
+
+//com/LogManagementSystem/LogManager/Repository
