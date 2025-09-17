@@ -27,6 +27,9 @@ RUN apt-get update && apt-get install -y curl
 # Copy only the built JAR from the 'builder' stage into this final image
 COPY --from=builder /app/target/*.jar app.jar
 
+# Create directory for WAL files
+RUN mkdir -p /app/data/wal/active /app/data/wal/archived
+
 # Expose the port the application runs on
 EXPOSE 8080
 
