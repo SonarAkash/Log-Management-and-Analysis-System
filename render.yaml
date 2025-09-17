@@ -4,7 +4,8 @@ databases:
     databaseName: log_manager_db
     user: db_user
     ipAllowList:
-      - "0.0.0.0/0"
+      - source: "0.0.0.0/0"
+        description: "Allow all connections"
 
 services:
   # 1. The Redis Cache
@@ -52,3 +53,4 @@ services:
         value: "true"
       - key: SMTP_STARTTLS
         value: "true"
+
