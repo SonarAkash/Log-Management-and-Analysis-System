@@ -12,6 +12,9 @@ services:
   - type: redis
     name: redis-cache
     plan: free
+    ipAllowList:
+      - source: "0.0.0.0/0"
+        description: "Allow all connections"
 
   # 2. Spring Boot Application
   - type: web
