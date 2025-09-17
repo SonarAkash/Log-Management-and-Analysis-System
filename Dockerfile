@@ -32,10 +32,6 @@ RUN mkdir -p /app/data/wal/active /app/data/wal/archived
 
 # Expose the port the application runs on
 
-
-COPY entrypoint.sh .
-
-RUN chmod +x ./entrypoint.sh
 EXPOSE 8080
 
-ENTRYPOINT ["./entrypoint.sh"]
+ENTRYPOINT ["java","-jar","app.jar"]
