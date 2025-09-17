@@ -1,10 +1,11 @@
-services:
-  # 1. The PostgreSQL Database
-  - type: db
-    name: postgres-db
-    engine: postgres
+databases:
+  - name: postgres-db
     plan: free
+    databaseName: log_manager_db
+    user: db_user
 
+
+services:
   # 2. The Redis Cache
   - type: redis
     name: redis-cache
@@ -20,8 +21,7 @@ services:
     envVars:
       # --- Automatic Connection Details ---
       - key: DATABASE_URL # Spring Boot will auto-detect this!
-        fromService:
-          type: db
+        fromDatabase:
           name: postgres-db
           property: internalConnectionString
       - key: SPRING_REDIS_HOST
