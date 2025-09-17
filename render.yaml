@@ -25,10 +25,17 @@ services:
     healthCheckPath: /actuator/health
     envVars:
       # --- Automatic Connection Details ---
-      - key: spring.datasource.url
+      - key: SPRING_DATASOURCE_URL
+        value: "jdbc:postgresql://${postgres-db.host}:${postgres-db.port}/${postgres-db.database}"
+      - key: SPRING_DATASOURCE_USERNAME
         fromDatabase:
           name: postgres-db
-          property: connectionString
+          property: user
+      - key: SPRING_DATASOURCE_PASSWORD
+        fromDatabase:
+          name: postgres-db
+          property: password
+
       - key: SPRING_REDIS_HOST
         fromService:
           type: redis
@@ -39,6 +46,7 @@ services:
           type: redis
           name: redis-cache
           property: port
+
 
       - key: SPRING_PROFILES_ACTIVE
         value: prod
