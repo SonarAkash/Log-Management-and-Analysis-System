@@ -1,7 +1,7 @@
 package com.LogManagementSystem.LogManager.ParserPipeline;
 
 import com.LogManagementSystem.LogManager.Entity.LogEvent;
-import com.LogManagementSystem.LogManager.ParserPipeline.Repository.LogEventRepository;
+import com.LogManagementSystem.LogManager.Repository.LogEventRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;

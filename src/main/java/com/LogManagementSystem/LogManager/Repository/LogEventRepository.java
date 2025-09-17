@@ -1,4 +1,4 @@
-package com.LogManagementSystem.LogManager.ParserPipeline.Repository;
+package com.LogManagementSystem.LogManager.Repository;
 
 import com.LogManagementSystem.LogManager.Entity.LogEvent;
 import org.springframework.data.jpa.repository.JpaRepository;
