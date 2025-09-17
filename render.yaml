@@ -25,7 +25,7 @@ services:
     healthCheckPath: /actuator/health
     envVars:
       # --- Automatic Connection Details ---
-      - key: DATABASE_URL
+      - key: spring.datasource.url
         fromDatabase:
           name: postgres-db
           property: connectionString
