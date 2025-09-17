@@ -36,4 +36,4 @@ EXPOSE 8080
 # The command to run when the container starts
 #ENTRYPOINT ["java","-jar","app.jar"]
 # Replace your old ENTRYPOINT with this
-ENTRYPOINT ["sh", "-c", "java -Dspring.datasource.url=$DATABASE_URL -Dspring.redis.host=$REDIS_HOST -Dspring.redis.port=$REDIS_PORT -jar app.jar"]
+ENTRYPOINT ["sh", "-c", "JDBC_DATABASE_URL=$(echo $DATABASE_URL | sed 's/postgres:/postgresql:/') && java -Dspring.datasource.url=$JDBC_DATABASE_URL -Dspring.redis.host=$SPRING_REDIS_HOST -Dspring.redis.port=$SPRING_REDIS_PORT -jar app.jar"]

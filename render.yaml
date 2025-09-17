@@ -23,20 +23,13 @@ services:
     runtime: docker
     dockerfilePath: ./Dockerfile
     healthCheckPath: /actuator/health
-    initialDelaySeconds: 60
+    initialDelaySeconds: 80
     envVars:
       # --- Automatic Connection Details ---
-      - key: SPRING_DATASOURCE_URL
-        value: "jdbc:postgresql://${postgres-db.host}:${postgres-db.port}/${postgres-db.database}"
-      - key: SPRING_DATASOURCE_USERNAME
+      - key: DATABASE_URL
         fromDatabase:
           name: postgres-db
-          property: user
-      - key: SPRING_DATASOURCE_PASSWORD
-        fromDatabase:
-          name: postgres-db
-          property: password
-
+          property: connectionString
       - key: SPRING_REDIS_HOST
         fromService:
           type: redis
