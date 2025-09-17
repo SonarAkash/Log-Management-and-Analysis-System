@@ -33,7 +33,7 @@ build/
 .vscode/
 
 ### GeoLite2 Database ###
-**/GeoLite2-City.mmdb
+#**/GeoLite2-City.mmdb
 
 ### Environment Files ###
 .env

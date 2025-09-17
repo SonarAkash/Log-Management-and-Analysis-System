@@ -1,0 +1,58 @@
+services:
+  # 1. The PostgreSQL Database
+  - type: pserv
+    name: postgres-db
+    runtime: postgres
+    plan: free
+    postgres:
+      version: "15"
+
+  # 2. The Redis Cache
+  - type: pserv
+    name: redis-cache
+    runtime: redis
+    plan: free
+
+  # 3. Your Spring Boot Application
+  - type: web
+    name: log-service
+    plan: free
+    runtime: docker # Tells Render to use your Dockerfile
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /actuator/health
+    envVars:
+      # --- Automatic Connection Details ---
+      - key: DATABASE_URL # Spring Boot will auto-detect this!
+        fromService:
+          type: pserv
+          name: postgres-db
+          property: connectionString
+      - key: SPRING_REDIS_HOST
+        fromService:
+          type: pserv
+          name: redis-cache
+          property: host
+      - key: SPRING_REDIS_PORT
+        fromService:
+          type: pserv
+          name: redis-cache
+          property: port
+
+      # --- Your Manual Environment Variables ---
+      # Fill in your actual secret values here
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+      - key: LOG_MANAGER_SECURE_KEY # Ensure this matches the property `secure.key`
+        value: "NWUgZGUgZDcgODcgMjcgZTUgMDEgMzQgZjYgOTggZjAgZTkgMmIgYTIgYjMgMzkgCjYzIGUyIDI1IDFiIGY1IDU5IDc4IGRkIDhkIGQwIGJhIDg0IDIwIDFkIDRlIGQ3IAo0ZiA3MiBmNyBlOSAyYSA2YiA3YiAyOCBmNSA2NiA5ZiA1NiBlNiA1ZiAzYSAyNyA="
+      - key: SMTP_HOST
+        value: "smtp-relay.brevo.com"
+      - key: SMTP_PORT
+        value: "587"
+      - key: SMTP_USERNAME
+        value: "96dfcf001@smtp-brevo.com"
+      - key: SMTP_PASSWORD
+        value: "ONEUh4LTb5aABVn7"
+      - key: SMTP_AUTH
+        value: "true"
+      - key: SMTP_STARTTLS
+        value: "true"
