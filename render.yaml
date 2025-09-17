@@ -52,8 +52,4 @@ services:
         value: "96dfcf001@smtp-brevo.com"
       - key: SMTP_PASSWORD
         value: "ONEUh4LTb5aABVn7"
-      - key: SMTP_AUTH
-        value: "true"
-      - key: SMTP_STARTTLS
-        value: "true"
 

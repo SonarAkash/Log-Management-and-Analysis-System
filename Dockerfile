@@ -34,4 +34,6 @@ RUN mkdir -p /app/data/wal/active /app/data/wal/archived
 EXPOSE 8080
 
 # The command to run when the container starts
-ENTRYPOINT ["java","-jar","app.jar"]
+#ENTRYPOINT ["java","-jar","app.jar"]
+# Replace your old ENTRYPOINT with this
+ENTRYPOINT ["sh", "-c", "java -Dspring.datasource.url=$DATABASE_URL -Dspring.redis.host=$REDIS_HOST -Dspring.redis.port=$REDIS_PORT -jar app.jar"]
