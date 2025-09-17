@@ -3,9 +3,8 @@ databases:
     plan: free
     databaseName: log_manager_db
     user: db_user
-    ipAllowList: #  IP allow list
-      - cidr: 0.0.0.0/0
-        description: "Allow all connections"
+    ipAllowList:
+      - "0.0.0.0/0"
 
 services:
   # 1. The Redis Cache
