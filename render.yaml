@@ -1,15 +1,13 @@
 services:
   # 1. The PostgreSQL Database
-  - type: pserv
+  - type: db
     name: postgres-db
-    runtime: postgres
+    engine: postgres
     plan: free
-#    version: "15"
 
   # 2. The Redis Cache
-  - type: pserv
+  - type: redis
     name: redis-cache
-    runtime: redis
     plan: free
 
   # 3. Your Spring Boot Application
@@ -23,17 +21,17 @@ services:
       # --- Automatic Connection Details ---
       - key: DATABASE_URL # Spring Boot will auto-detect this!
         fromService:
-          type: pserv
+          type: db
           name: postgres-db
-          property: connectionString
+          property: internalConnectionString
       - key: SPRING_REDIS_HOST
         fromService:
-          type: pserv
+          type: redis
           name: redis-cache
           property: host
       - key: SPRING_REDIS_PORT
         fromService:
-          type: pserv
+          type: redis
           name: redis-cache
           property: port
 
