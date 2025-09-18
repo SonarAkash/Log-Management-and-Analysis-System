@@ -26,7 +26,7 @@ services:
     image: redis:latest
     container_name: log-manager-redis
     ports:
-      - "${REDIS_PORT}:6379"
+      - "6379:6379"
     volumes:
       - redis-data:/data
     healthcheck:
