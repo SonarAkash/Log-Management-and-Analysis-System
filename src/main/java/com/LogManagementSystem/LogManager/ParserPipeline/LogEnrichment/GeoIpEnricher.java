@@ -1,16 +1,19 @@
 package com.LogManagementSystem.LogManager.ParserPipeline.LogEnrichment;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.InetAddress;
+
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
+import org.springframework.stereotype.Service;
+
 import com.LogManagementSystem.LogManager.Entity.LogEvent;
 import com.maxmind.geoip2.DatabaseReader;
 import com.maxmind.geoip2.exception.AddressNotFoundException;
 import com.maxmind.geoip2.model.CityResponse;
+
 import jakarta.annotation.PostConstruct;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
-import org.springframework.stereotype.Service;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.InetAddress;
 
 @Service
 public class GeoIpEnricher {
@@ -65,10 +68,24 @@ public class GeoIpEnricher {
 
             String country = response.getCountry().getName();
             String city = response.getCity().getName();
-
-
-            logEvent.getAttrs().put("country", country);
-            logEvent.getAttrs().put("city", city);
+            
+            String continent = response.getContinent().getName();
+            String subdivision = response.getMostSpecificSubdivision().getName();
+            String postalCode = response.getPostal().getCode();
+            
+            Double latitude = response.getLocation().getLatitude();
+            Double longitude = response.getLocation().getLongitude();
+            
+            String timezone = response.getLocation().getTimeZone();
+            
+            logEvent.getAttrs().put("geo_country", country);
+            logEvent.getAttrs().put("geo_city", city);
+            logEvent.getAttrs().put("geo_continent", continent);
+            logEvent.getAttrs().put("geo_region", subdivision);
+            logEvent.getAttrs().put("geo_postal", postalCode);
+            logEvent.getAttrs().put("geo_latitude", latitude);
+            logEvent.getAttrs().put("geo_longitude", longitude);
+            logEvent.getAttrs().put("geo_timezone", timezone);
 
         } catch (AddressNotFoundException e) {
            // address not present in db
