@@ -1,37 +1,51 @@
-# === Stage 1: The Builder ===
-# An official Maven image to build the application JAR file.
+# Build stage
 FROM maven:3.9.6-eclipse-temurin-21 AS builder
-
-# Set the working directory inside the container
 WORKDIR /app
 
-# Copy the project's pom.xml and download dependencies
+# Copy only pom.xml first and download dependencies
 COPY pom.xml .
 RUN mvn dependency:go-offline
 
-# Copy the rest of the source code
+# Now copy the source code
 COPY src ./src
 
-# Build the application, creating the executable JAR. Skip tests.
+# Build the application
 RUN mvn clean package -DskipTests
 
-# === Stage 2: The Final Image ===
-# Use a lightweight Java image for the final container.
-FROM openjdk:21-jdk-slim
-
-# Set the working directory
+# Final stage
+FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y curl
+# Add non-root user for security
+RUN addgroup -S spring && adduser -S spring -G spring
 
-# Copy only the built JAR from the 'builder' stage into this final image
-COPY --from=builder /app/target/*.jar app.jar
+# Create WAL directory structure with proper permissions
+# Match the exact paths from application-prod.properties
+RUN mkdir -p /app/data/wal/archived && \
+    touch /app/data/wal/activeWal.log && \
+    chown -R spring:spring /app/data
 
-# Create directory for WAL files
-RUN mkdir -p /app/data/wal/active /app/data/wal/archived
+# Switch to non-root user
+USER spring:spring
 
-# Expose the port the application runs on
+# Copy jar from builder
+COPY --from=builder --chown=spring:spring /app/target/*.jar app.jar
 
-EXPOSE 8080
+# Environment variables with correct naming to match application properties
+ENV PORT=8080
+ENV WAL_ACTIVE_WAL_PATH=/app/data/wal/activeWal.log
+ENV WAL_ARCHIVED_WAL_DIRECTORY_PATH=/app/data/wal/archived
 
-ENTRYPOINT ["java","-jar","app.jar"]
+# Set Java options for better container performance
+ENV JAVA_OPTS="-XX:MaxRAMPercentage=75.0 -Djava.security.egd=file:/dev/./urandom"
+
+# Health check for container orchestration
+HEALTHCHECK --interval=30s --timeout=3s \
+  CMD wget -q --spider http://localhost:${PORT}/actuator/health || exit 1
+
+# Run with proper configuration
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS \
+    -Dserver.port=${PORT} \
+    -Dwal.active-wal-path=${WAL_ACTIVE_WAL_PATH} \
+    -Dwal.archived-wal-directory-path=${WAL_ARCHIVED_WAL_DIRECTORY_PATH} \
+    -jar app.jar"]

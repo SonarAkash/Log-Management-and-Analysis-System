@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <property name="LOGS" value="./logs" />
+
+    <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>
+                %d{ISO8601} %-5level [%thread] %logger{36} - %msg%n
+            </Pattern>
+        </layout>
+    </appender>
+
+    <!-- Specific logger for email service -->
+    <logger name="com.LogManagementSystem.LogManager.Security.EmailService" level="INFO"/>
+    
+    <!-- Turn off debug logging for JavaMail -->
+    <logger name="org.springframework.mail" level="INFO"/>
+    <logger name="javax.mail" level="INFO"/>
+    <logger name="com.sun.mail" level="INFO"/>
+
+    <root level="info">
+        <appender-ref ref="Console" />
+    </root>
+
+</configuration>

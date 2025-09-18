@@ -11,14 +11,16 @@ import jakarta.mail.MessagingException;
 
 @Service
 public class OtpService {
-    
-    @Autowired
-    private StringRedisTemplate redisTemplate;
-    
-    @Autowired
-    private EmailService emailService;
-
     private static final long OTP_VALID_DURATION_SECONDS = 60; // 1 minute
+    
+    private final StringRedisTemplate redisTemplate;
+    private final EmailService emailService;
+
+    @Autowired
+    public OtpService(StringRedisTemplate redisTemplate, EmailService emailService) {
+        this.redisTemplate = redisTemplate;
+        this.emailService = emailService;
+    }
     
     // 6-digit OTP
     public String generateOTP() {

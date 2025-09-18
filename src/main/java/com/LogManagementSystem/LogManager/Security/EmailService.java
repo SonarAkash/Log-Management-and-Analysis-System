@@ -1,5 +1,7 @@
 package com.LogManagementSystem.LogManager.Security;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -8,22 +10,26 @@ import org.springframework.stereotype.Service;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 
-
 @Service
 public class EmailService {
+    private static final Logger logger = LoggerFactory.getLogger(EmailService.class);
+    
+    private final JavaMailSender mailSender;
 
     @Autowired
-    private JavaMailSender mailSender;
+    public EmailService(JavaMailSender mailSender) {
+        this.mailSender = mailSender;
+    }
 
     public void sendOtpEmail(String toEmail, String otp) throws MessagingException {
-//        System.out.println("Attempting to send OTP email to: " + toEmail);
+        MimeMessage message = null;
         try {
-            MimeMessage message = mailSender.createMimeMessage();
+            message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
             
             helper.setFrom("akashsonar.9113@gmail.com");
             helper.setTo(toEmail);
-        helper.setSubject("LogFlux - Your Verification Code");
+            helper.setSubject("LogFlux - Your Verification Code");
 
         String htmlContent = """
             <!DOCTYPE html>
@@ -153,13 +159,20 @@ public class EmailService {
         // Replace the placeholder with the actual OTP
         htmlContent = htmlContent.replace("{0}", otp);
         helper.setText(htmlContent, true);
-//            System.out.println("Attempting to send email...");
             mailSender.send(message);
-//            System.out.println("Email sent successfully");
+            logger.info("OTP email sent successfully to: {}", maskEmail(toEmail));
+            
         } catch (Exception e) {
-            System.err.println("Email sending failed: " + e.getMessage());
-            e.printStackTrace();
-            throw new MessagingException("Failed to send OTP email: " + e.getMessage(), e);
+            logger.error("Failed to send OTP email to {}: {}", maskEmail(toEmail), e.getMessage());
+            throw new MessagingException("Failed to send OTP email", e);
         }
+    }
+
+    // Utility method to mask email for logging
+    private String maskEmail(String email) {
+        if (email == null || email.length() < 5) return "***";
+        int atIndex = email.indexOf('@');
+        if (atIndex <= 2) return "***" + email.substring(atIndex);
+        return email.substring(0, 2) + "***" + email.substring(atIndex);
     }
 }
