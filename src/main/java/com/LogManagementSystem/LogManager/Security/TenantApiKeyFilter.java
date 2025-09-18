@@ -52,6 +52,7 @@ public class TenantApiKeyFilter extends OncePerRequestFilter {
                         null,
                         Collections.singletonList(new SimpleGrantedAuthority(Role.TENANT.name()))
                 );
+//        System.out.println("id : " + tenant.getId());
         tenantAuth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         SecurityContextHolder.getContext().setAuthentication(tenantAuth);
 
