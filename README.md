@@ -163,14 +163,14 @@ APP_PORT=8080
 SPRING_PROFILE=prod
 TIMEZONE=Asia/Kolkata
 
-SPRING_DATA_REDIS_URL = you_redis_url   (FOR OTP)
+SPRING_DATA_REDIS_URL=you_redis_url   (FOR OTP)
 
 # Security
 SECURE_KEY=your_base64_encoded_secure_key
 K6_API_TOKEN=your_k6_api_token
 ```
 
-## ⚠️ Important Security Notes
+## ⚠️ Important Note
 - The `SECURE_KEY` should be a base64-encoded secret key
 ---
 
