@@ -165,6 +165,8 @@ TIMEZONE=Asia/Kolkata
 
 SPRING_DATA_REDIS_URL=you_redis_url   (FOR OTP)
 
+EMAIL_API_KEY=EMAIL_API_KEY
+
 # Security
 SECURE_KEY=your_base64_encoded_secure_key
 K6_API_TOKEN=your_k6_api_token
