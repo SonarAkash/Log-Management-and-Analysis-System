@@ -18,6 +18,6 @@ public interface LogEventRepository extends JpaRepository<LogEvent, UUID> {
 
     @Modifying
     @Transactional
-    @Query("DELETE FROM LogEvent l WHERE l.ingested_at < :cutoffTimestamp")
+    @Query("DELETE FROM LogEvent l WHERE l.ingestedAt  < :cutoffTimestamp")
     long deleteByIngestedAtBefore(Instant cutoffTimestamp);
 }
