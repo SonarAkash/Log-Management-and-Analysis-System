@@ -123,7 +123,6 @@ Other log formats will be stored as raw messages in the 'default' type, with lim
    cp .env.example .env
 
    # Edit .env file with your secure values
-   nano .env   # or use your preferred text editor
    ```
 
 4. **Run with Docker Compose** (Recommended)
@@ -137,7 +136,6 @@ Other log formats will be stored as raw messages in the 'default' type, with lim
    - LogFlux application
    - k6 load testing service (optional)
 
-   Note: The .env file contains sensitive information and is git-ignored. Never commit it to version control!
 
 4. **Run Locally** (Alternative)
    - Configure your PostgreSQL database
@@ -165,15 +163,15 @@ APP_PORT=8080
 SPRING_PROFILE=prod
 TIMEZONE=Asia/Kolkata
 
+SPRING_DATA_REDIS_URL=you_redis_url   (FOR OTP)
+
 # Security
 SECURE_KEY=your_base64_encoded_secure_key
 K6_API_TOKEN=your_k6_api_token
 ```
 
-## ⚠️ Important Security Notes
+## ⚠️ Important Note
 - The `SECURE_KEY` should be a base64-encoded secret key
-- Rotate the `K6_API_TOKEN` periodically
-- Use different credentials for development and production environments
 ---
 
 ### 📂 Properties Files
