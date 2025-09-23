@@ -37,3 +37,11 @@ build/
 
 ### Environment Files ###
 .env
+
+### Sensitive files
+startup-script.sh
+new project info.txt
+logflux-key
+logflux-key.pub
+cloudbuild.yaml
+Dockerfile

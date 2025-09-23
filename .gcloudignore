@@ -1,0 +1,38 @@
+# Ignore files that are not needed for the build
+.git
+.gitignore
+.mvn
+.env*
+.vscode/
+.idea/
+*.iml
+*.iws
+*.ipr
+.settings/
+.project
+.classpath
+.factorypath
+
+# Ignore compiled files and build directories
+target/
+!target/*.jar
+build/
+out/
+bin/
+
+# Ignore test directories
+src/test/
+
+# Ignore development and local files
+*.log
+*.tmp
+*.temp
+*.bak
+
+# Keep essential files
+!pom.xml
+!src/main/**
+!Dockerfile
+!.mvn/wrapper/maven-wrapper.properties
+!mvnw
+!mvnw.cmd

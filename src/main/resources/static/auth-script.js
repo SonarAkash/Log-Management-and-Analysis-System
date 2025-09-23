@@ -8,6 +8,32 @@ document.addEventListener('DOMContentLoaded', () => {
     const notification = document.getElementById('notification');
     const apiKeyDisplay = document.getElementById('api-key-display');
 
+
+    const copyKeyBtn = document.getElementById('copy-key-btn');
+    const copyUrlBtn = document.getElementById('copy-url-btn');
+    const goToLoginBtn = document.getElementById('go-to-login-btn');
+
+    if (copyKeyBtn) {
+        copyKeyBtn.addEventListener('click', () => {
+            const apiKey = document.getElementById('api-key-value').textContent;
+            if (apiKey) copyToClipboard(apiKey, 'API Key');
+        });
+    }
+
+    if (copyUrlBtn) {
+        copyUrlBtn.addEventListener('click', () => {
+            const ingestUrl = document.getElementById('ingest-url-value').textContent;
+            if (ingestUrl) copyToClipboard(ingestUrl, 'Ingest URL');
+        });
+    }
+
+    if (goToLoginBtn) {
+        goToLoginBtn.addEventListener('click', () => {
+            apiKeyDisplay.style.display = 'none';
+            showView('login-view');
+        });
+    }
+
     showSignupLink.addEventListener('click', (e) => { e.preventDefault(); showView('signup-view'); });
     showLoginLink.addEventListener('click', (e) => { e.preventDefault(); showView('login-view'); });
 
@@ -193,14 +219,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('ingest-url-value').textContent = data.ingestUrl;
                 apiKeyDisplay.style.display = 'block';
                 showNotification('Registration successful! Please save your API key.', 'success');
-
-                // Add click handlers for copy buttons and login button
-                document.getElementById('copy-key-btn').addEventListener('click', () => copyToClipboard(data.apiKey, 'API Key'));
-                document.getElementById('copy-url-btn').addEventListener('click', () => copyToClipboard(data.ingestUrl, 'Ingest URL'));
-                document.getElementById('go-to-login-btn').onclick = () => {
-                    apiKeyDisplay.style.display = 'none';
-                    showView('login-view');
-                };
             } else {
                 // Scenario 2: Subsequent user of an existing tenant
                 showNotification('Registration successful! Please log in.', 'success');

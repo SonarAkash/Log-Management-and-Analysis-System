@@ -1,6 +1,8 @@
 package com.LogManagementSystem.LogManager.ParserPipeline;
 
 import com.LogManagementSystem.LogManager.Entity.WalProperties;
+import com.LogManagementSystem.LogManager.IngestGateway.FileWalAppender;
+
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,9 +17,14 @@ import java.nio.file.*;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 public class WalProducer {
+
+
+    private static final Logger logger = LoggerFactory.getLogger(FileWalAppender.class);
 
 //    private String archivedWalDirectoryPath;
     private Path archivedWalDirPath;
@@ -27,7 +34,7 @@ public class WalProducer {
 
     @Autowired
     public WalProducer(WalProperties pros) throws IOException {
-        System.out.println("producer init");
+        logger.info("Producer init");
 //        this.archivedWalDirectoryPath = pros.getArchivedWalDirectoryPath();
         this.archivedWalDirPath = Paths.get(pros.getArchivedWalDirectoryPath());
         if (!Files.exists(archivedWalDirPath)){
@@ -56,7 +63,7 @@ public class WalProducer {
 
     private void processNewFilesContinuously() {
 
-        System.out.println("Starting WAL Polling thread...");
+        logger.info("Starting WAL Polling thread...");
         while (true) {
             try (DirectoryStream<Path> stream = Files.newDirectoryStream(archivedWalDirPath)) {
 
@@ -64,13 +71,13 @@ public class WalProducer {
                     processFile(file);
                 }
             } catch (IOException e) {
-                System.err.println("Error polling directory: " + e.getMessage());
+                logger.error("Error polling directory: " , e);
             }
 
             try {
                 Thread.sleep(100); // Poll every 100ms
             } catch (InterruptedException e) {
-                System.err.println("Polling was interrupted !!");
+                logger.error("Polling was interrupted !!", e);
                 Thread.currentThread().interrupt();
                 return;
             }
@@ -113,7 +120,7 @@ public class WalProducer {
                 }
             }
         } catch (IOException e){
-            System.err.println("Error reading existing files:" + e.getMessage());
+            logger.error("Error reading existing WALs:", e);
         }
     }
 
@@ -141,12 +148,12 @@ public class WalProducer {
 //                break;
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
-                System.err.println("producer interrupted !!");
+                logger.error("Producer interrupted !!", e);
             }
-            System.out.println("file deleted : " + file.toString());
+            logger.info("Wal deleted : " + file.toString());
             Files.delete(file);
         } catch (IOException e) {
-            System.err.println("failed to open the file :(");
+            logger.error("Failed to open the Wal :(");
         }
     }
 

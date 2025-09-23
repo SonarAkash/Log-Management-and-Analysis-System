@@ -58,3 +58,5 @@ CREATE INDEX idx_logs_attrs_gin ON logs USING GIN (attrs);
 CREATE INDEX idx_logs_message_tsv_gin ON logs USING GIN (message_tsv);
 CREATE INDEX idx_logs_attrs_fts ON logs USING GIN (jsonb_to_tsvector('english', attrs, '["string"]'));
 
+CREATE INDEX idx_logs_ingested_at ON logs (ingested_at);
+

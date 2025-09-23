@@ -7,17 +7,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
-import jakarta.mail.MessagingException;
+import sendinblue.ApiException;
 
 @Service
 public class OtpService {
     private static final long OTP_VALID_DURATION_SECONDS = 60; // 1 minute
     
     private final StringRedisTemplate redisTemplate;
-    private final EmailService emailService;
+    private final BrevoEmailService emailService;
 
     @Autowired
-    public OtpService(StringRedisTemplate redisTemplate, EmailService emailService) {
+    public OtpService(StringRedisTemplate redisTemplate, BrevoEmailService emailService) {
         this.redisTemplate = redisTemplate;
         this.emailService = emailService;
     }
@@ -46,14 +46,14 @@ public class OtpService {
         redisTemplate.delete(key);
     }
 
-    public void generateAndSendOTP(String email) throws MessagingException {
+    public void generateAndSendOTP(String email) throws ApiException {
         try {
             String otp = generateOTP();
             emailService.sendOtpEmail(email, otp);
             // Only save OTP after successful email send
             saveOTP(email, otp);
         } catch (Exception e) {
-            throw new MessagingException("Failed to send OTP email: " + e.getMessage());
+            throw new ApiException("Failed to send OTP email: " + e.getMessage());
         }
     }
 

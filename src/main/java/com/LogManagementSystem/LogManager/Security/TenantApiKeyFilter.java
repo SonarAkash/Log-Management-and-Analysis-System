@@ -71,7 +71,9 @@ public class TenantApiKeyFilter extends OncePerRequestFilter {
                 path.endsWith(".html") ||
                 path.endsWith(".css") ||
                 path.endsWith(".js") ||
-                path.endsWith(".ico")){
+                path.endsWith(".ico") ||
+                path.startsWith("/api/auth") ||
+                path.startsWith("/test-resource")){
             return true;
         }
         return !path.startsWith("/api/v1/ingest");

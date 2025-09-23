@@ -3,12 +3,16 @@ package com.LogManagementSystem.LogManager;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.scheduling.annotation.EnableScheduling;
 // import org.springframework.context.annotation.Import;
 
 //import com.giffing.bucket4j.spring.boot.starter.config.filter.Bucket4JBaseConfiguration;
 
-@SpringBootApplication
+@SpringBootApplication(exclude = {
+    org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration.class
+})
 @EnableJpaRepositories("com.LogManagementSystem.LogManager.Repository")
+@EnableScheduling
 //@Import(Bucket4JBaseConfiguration.class)
 public class LogManagerApplication {
 
