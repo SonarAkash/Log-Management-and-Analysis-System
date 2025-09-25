@@ -46,7 +46,9 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry){
-        registry.addEndpoint("websocket-connect").withSockJS();
+        registry.addEndpoint("websocket-connect")
+                .setAllowedOriginPatterns("https://logflux.tech")
+                .withSockJS();
     }
 
     @Bean

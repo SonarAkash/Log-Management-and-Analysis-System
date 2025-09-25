@@ -100,7 +100,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function connectWebSocket() {
         updateConnectionStatus('Connecting...', 'status-connecting');
         stompClient = new StompJs.Client({
-            webSocketFactory: () => new SockJS('/websocket-connect'),
+            webSocketFactory: () => new SockJS('https://logflux.tech/websocket-connect'),
             connectHeaders: { Authorization: `Bearer ${jwtToken}` },
             heartbeatIncoming: 10000, heartbeatOutgoing: 10000,
             reconnectDelay: 5000,
