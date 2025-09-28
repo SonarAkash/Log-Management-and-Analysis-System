@@ -61,7 +61,8 @@ Other log formats will be stored as raw messages in the 'default' type, with lim
 ## 📸 Screenshots
 
 ![Landing](./images/landing.png)
-![Dashboard](./images/dashboard.png)
+
+![Live-tail](./images/livetail.png)
 
 ![Search Interface](./images/search.png)
 
