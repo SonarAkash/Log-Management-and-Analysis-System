@@ -50,12 +50,20 @@ Other log formats will be stored as raw messages in the 'default' type, with lim
 
 ## 📸 Workflow
 
-![Dashboard](./images/img1.png)
-![Live Tail](./images/img2.png)
-![Search Interface](./images/img3.png)
-![Analytics](./images/img4.png)
-![Configuration](./images/img5.png)
-![Documentation](./images/img6.png)
+![Workflow-1](./images/img1.png)
+![Workflow-2](./images/img2.png)
+![Workflow-3](./images/img3.png)
+![Workflow-4](./images/img4.png)
+![Workflow-5](./images/img5.png)
+![Workflow-6](./images/img6.png)
+
+
+## 📸 Screenshots
+
+![Landing](./images/landing.png)
+![Dashboard](./images/dashboard.png)
+
+![Search Interface](./images/search.png)
 
 ## 🚀 Key Features
 

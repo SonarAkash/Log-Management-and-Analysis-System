@@ -49,6 +49,9 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         registry.addEndpoint("websocket-connect")
                 .setAllowedOriginPatterns("https://logflux.tech")
                 .withSockJS();
+
+        // for dev mode remove setAllowedOriginPattern
+        // and change the url for web-socket in livescript.js to use localhost or use relative url/path
     }
 
     @Bean

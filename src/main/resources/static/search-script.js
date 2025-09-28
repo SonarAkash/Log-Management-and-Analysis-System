@@ -81,6 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         showState('loading');
+        resultsContainer.innerHTML = '';
 
         let startDate = null;
         let endDate = null;
