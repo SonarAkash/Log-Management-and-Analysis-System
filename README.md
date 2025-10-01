@@ -12,28 +12,51 @@ A high-performance, log management and analysis system built with Spring Boot, P
 
 > ⚠️ **IMPORTANT NOTE**: The current system fully supports only JSON and LogFMT formats. All other log types will be stored as 'default' type without advanced searching capabilities. Please format your logs in either JSON or LogFMT format for optimal functionality.
 
-LogFlux supports two primary log formats with optimized parsing capabilities:
+### Sending Logs to LogFlux
+LogFlux provides a straightforward HTTP API for ingesting logs. Send your logs using a simple HTTP POST request to the ingest endpoint with your API key.
 
-1. **JSON Format**
+#### API Endpoint Details
+- **URL**: `https://logflux.tech/api/v1/ingest`
+- **HTTP Method**: POST
+- **Authentication**: API key in HTTP header
+  - Header Name: `X-Tenant-Api-Key`
+  - Header Value: Your API key (obtained during setup)
+
+LogFlux supports 2 log formats with optimized parsing capabilities:
+
+1. **JSON Format** (Recommended)
    - Fully parsed and indexed
    - Supports nested JSON structures (flattened during ingestion)
    - All fields are queryable
    
-   Example:
+   Example JSON payload:
    ```json
    {
-       "service": "api-gateway",
+       "timestamp": "2025-10-01T12:30:00Z",
        "level": "INFO",
-       "message": "Request to /api/v1/users completed successfully",
-       "hostname": "prod-gateway-7b5d",
-       "clientIp": "198.51.100.24",
-       // below are some examples of non indexed fields, but there values are searchable
-       "http_user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36",
-       "trace_id": "a1b2c3d4-e5f6-7890-1234-567890abcdef",
-       "request_duration_ms": 78,
-       "http_status": 200
-       // Additional fields will be stored in attrs JSON map
+       "message": "Payment processed successfully for order #12345",
+       "service": "payment-service",
+       "details": {
+           "trace_id": "a1b2c3d4-e5f6-7890-1234-567890abcdef",
+           "user_id": "user-99",
+           "amount": 99.99
+       }
    }
+   ```
+
+   Send using curl:
+   ```bash
+   curl -X POST \
+     https://logflux.tech/api/v1/ingest \
+     -H "Content-Type: application/json" \
+     -H "X-Tenant-Api-Key: YOUR_API_KEY" \
+     -d '{
+       "timestamp": "2025-10-01T12:30:00Z",
+       "level": "INFO",
+       "message": "Payment processed successfully",
+       "service": "payment-service",
+       "details": {"trace_id": "a1b2c3d4-e5f6"}
+     }'
    ```
 
 2. **LogFMT Format**
@@ -41,12 +64,43 @@ LogFlux supports two primary log formats with optimized parsing capabilities:
    - Perfect for structured logging
    - Each field is parsed into a queryable attribute
 
-   Example:
+   Example LogFMT payload:
    ```
-   level=INFO service=api-gateway hostname=prod-gateway-7b5d clientIp=198.51.100.24 msg="Request to /api/v1/users completed successfully" http_user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64)..." trace_id=a1b2c3d4-e5f6-7890-1234-567890abcdef request_duration_ms=78 http_status=200
+   ts=2025-10-01T12:35:00Z level=WARN service=order-service msg="Inventory low for product" product_id=p-54321 stock=5
    ```
 
-Other log formats will be stored as raw messages in the 'default' type, with limited parsing capabilities and search functionality.
+   Send using curl:
+   ```bash
+   curl -X POST \
+     https://logflux.tech/api/v1/ingest \
+     -H "Content-Type: text/plain" \
+     -H "X-Tenant-Api-Key: YOUR_API_KEY" \
+     -d 'ts=2025-10-01T12:35:00Z level=WARN service=order-service msg="Inventory low for product" product_id=p-54321 stock=5'
+   ```
+
+3. **Plain Text Format**
+   - Supports unstructured log messages
+   - Handles multi-line stack traces
+   - Stored as raw messages with basic search capability
+
+   Example plain text payload:
+   ```
+   2025-10-01T12:40:00Z [http-nio-8080-exec-1] ERROR c.a.MyService - Failed to connect to downstream service
+   java.net.ConnectException: Connection refused
+       at java.base/sun.nio.ch.Net.pollConnect(Native Method)
+       at java.base/sun.nio.ch.Net.pollConnectNow(Net.java:672)
+   ```
+
+   Send using curl:
+   ```bash
+   curl -X POST \
+     https://logflux.tech/api/v1/ingest \
+     -H "Content-Type: text/plain" \
+     -H "X-Tenant-Api-Key: YOUR_API_KEY" \
+     --data-binary "2025-10-01T12:40:00Z [worker-3] ERROR - Null pointer exception while processing request"
+   ```
+
+Plain text and other non-structured formats will be stored with limited parsing capabilities and basic search functionality.
 
 ## 📸 Workflow
 
