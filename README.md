@@ -81,20 +81,6 @@ LogFlux supports 2 log formats with optimized parsing capabilities:
        "service": "payment-service",
        "details": {"trace_id": "a1b2c3d4-e5f6"}
      }'
-
-   Send using curl:
-   ```bash
-   curl -X POST \
-     https://logflux.tech/api/v1/ingest \
-     -H "Content-Type: application/json" \
-     -H "X-Tenant-Api-Key: YOUR_API_KEY" \
-     -d '{
-       "timestamp": "2025-10-01T12:30:00Z",
-       "level": "INFO",
-       "message": "Payment processed successfully",
-       "service": "payment-service",
-       "details": {"trace_id": "a1b2c3d4-e5f6"}
-     }'
    ```
 
 2. **LogFMT Format**
