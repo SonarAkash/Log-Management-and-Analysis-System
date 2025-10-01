@@ -120,7 +120,7 @@ public class SqlGenerator implements Expr.Visitor<SqlQuery>{
         // Check for the special '_exists_' keyword.
         if ("_exists_".equals(key)) {
             // The "value" from the token is the actual key I want to check for existence.
-            String sql = "attrs ? ?";
+            String sql = "jsonb_exists(attrs, ?)";
             List<Object> params = List.of(value);
             return new SqlQuery(sql, params);
         }
