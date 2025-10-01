@@ -30,19 +30,57 @@ LogFlux supports 2 log formats with optimized parsing capabilities:
    - All fields are queryable
    
    Example JSON payload:
-   ```json
+    ```json
    {
-       "timestamp": "2025-10-01T12:30:00Z",
-       "level": "INFO",
-       "message": "Payment processed successfully for order #12345",
-       "service": "payment-service",
-       "details": {
-           "trace_id": "a1b2c3d4-e5f6-7890-1234-567890abcdef",
-           "user_id": "user-99",
-           "amount": 99.99
+     "timestamp": "2025-10-01T14:32:45Z",
+     "level": "INFO",
+     "service": "user-auth",
+     "message": "User login successful",
+     "request": {
+       "ip": "192.168.1.25",
+       "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
+       "headers": {
+         "content-type": "application/json",
+         "accept-language": "en-US,en;q=0.9"
        }
+     },
+     "user": {
+       "id": "u12345",
+       "name": "Alice Johnson",
+       "roles": ["admin", "editor"],
+       "preferences": {
+         "theme": "dark",
+         "notifications": {
+           "email": true,
+           "sms": false,
+           "push": true
+         }
+       }
+     },
+     "response": {
+       "status": 200,
+       "durationMs": 153,
+       "metadata": {
+         "sessionId": "sess_67890",
+         "region": "us-east-1"
+       }
+     }
    }
    ```
+
+   Send using curl:
+   ```bash
+   curl -X POST \
+     https://logflux.tech/api/v1/ingest \
+     -H "Content-Type: application/json" \
+     -H "X-Tenant-Api-Key: YOUR_API_KEY" \
+     -d '{
+       "timestamp": "2025-10-01T12:30:00Z",
+       "level": "INFO",
+       "message": "Payment processed successfully",
+       "service": "payment-service",
+       "details": {"trace_id": "a1b2c3d4-e5f6"}
+     }'
 
    Send using curl:
    ```bash
