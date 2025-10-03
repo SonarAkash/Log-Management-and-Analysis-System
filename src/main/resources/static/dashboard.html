@@ -1,37 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard - LogFlux</title>
-  <link rel="stylesheet" href="/style.css">
-  <link rel="stylesheet" href="/dashboard-style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - LogFlux</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="/dashboard-style.css">
 </head>
 <body class="dashboard-body">
 
 <header class="main-header">
-  <div class="logo">LogFlux</div>
-  <div class="user-controls">
-    <span id="user-email-display"></span>
-    <button id="logout-button" class="tool-button">Logout</button>
-  </div>
+    <div class="logo">LogFlux</div>
+    <div class="user-controls">
+        <span id="user-email-display"></span>
+        <button id="logout-button" class="tool-button">Logout</button>
+    </div>
 </header>
 
 <main class="dashboard-main">
-  <h1>Welcome Back</h1>
-  <p>Choose an action to get started.</p>
-  <div class="action-cards">
-  <a href="/search.html" class="action-card">
-      <div class="icon">🔍</div>
-      <h2>Search Logs</h2>
-      <p>Dive into historical data with our powerful query language.</p>
-    </a>
-  <a href="/livetail.html" class="action-card">
-      <div class="icon">⚡</div>
-      <h2>Live Tail</h2>
-      <p>Watch your logs stream in from all your services in real-time.</p>
-    </a>
-  </div>
+    <h1>Welcome Back</h1>
+    <p>Choose an action to get started.</p>
+    <div class="action-cards">
+        <a href="/search.html" class="action-card">
+            <div class="icon">🔍</div>
+            <h2>Search Logs</h2>
+            <p>Dive into historical data with our powerful query language.</p>
+        </a>
+        <a href="/livetail.html" class="action-card">
+            <div class="icon">⚡</div>
+            <h2>Live Tail</h2>
+            <p>Watch your logs stream in from all your services in real-time.</p>
+        </a>
+    </div>
+
+    <div class="api-key-section">
+        <h2>API Key Management</h2>
+        <p>Use this key to authorize your applications to send logs to LogFlux.</p>
+
+        <div class="api-key-container">
+            <div id="no-key-prompt" style="display: none;">
+                <p>You don't have an API key yet. Generate one to get started!</p>
+            </div>
+
+            <div id="current-key-section" style="display: none;">
+                <h3>Your Current API Key</h3>
+                <p>Keep this key secure and do not expose it in client-side code.</p>
+                <div class="credential-box">
+                    <pre id="api-key-display" class="api-key"></pre>
+                    <div class="button-group">
+                        <button id="toggle-view-btn" class="credential-action-btn">View</button>
+                        <button id="copy-key-btn" class="credential-action-btn">Copy</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="api-key-actions">
+                <button id="generate-key-btn" class="primary-button">Generate API Key</button>
+                <p class="warning-text" id="regenerate-warning" style="display: none;">
+                    ⚠️ Generating a new key will invalidate your old one. Update all your services accordingly.
+                </p>
+            </div>
+        </div>
+    </div>
 </main>
 
 <script src="/dashboard-script.js"></script>

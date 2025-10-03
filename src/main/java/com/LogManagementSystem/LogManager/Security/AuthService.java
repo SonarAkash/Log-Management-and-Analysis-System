@@ -74,6 +74,13 @@ public class AuthService {
     }
 
 
+
+    public String getTenantToken(UUID tenantId){
+        return generateTenantToken(tenantId);
+    }
+
+
+
     private String generateTenantToken(UUID tenantId) {
         try {
             // random salt
