@@ -1,3 +1,38 @@
+.docs-nav {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 1rem;
+}
+
+.docs-nav a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.docs-nav a:hover {
+    color: var(--accent-primary);
+    background: var(--bg-medium);
+}
+
+.docs-nav a.active {
+    color: var(--accent-primary);
+    background: var(--bg-medium);
+    font-weight: 600;
+}
+
+.doc-section {
+    display: none;
+}
+
+.doc-section.active {
+    display: block;
+}
+
 .docs-main {
     max-width: 900px;
     margin: 2rem auto;
@@ -84,6 +119,19 @@
     color: var(--accent-primary);
     margin-top: 0;
     margin-bottom: 1rem;
+}
+
+.note-block {
+    background: var(--bg-darkest);
+    border-left: 4px solid var(--accent-warning);
+    padding: 1rem 1.5rem;
+    margin: 1.5rem 0;
+    border-radius: 4px;
+}
+
+.note-block p {
+    color: var(--text-warning);
+    margin: 0;
 }
 
 @media (max-width: 768px) {

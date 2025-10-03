@@ -27,10 +27,16 @@
 </header>
 
 <main class="docs-main">
-  <h1>LSQL Syntax Contract</h1>
-  <p>The Log Query Language (LSQL) allows you to search logs using a flexible and powerful syntax. The core components are search terms, field filters, operators, and groups.</p>
+  <nav class="docs-nav">
+    <a href="#lsql-guide" onclick="showSection('lsql-guide')" class="active">LSQL Guide</a>
+    <a href="#api-guide" onclick="showSection('api-guide')">API Guide</a>
+  </nav>
 
-  <h2>1. Search Terms (Barewords)</h2>
+  <section id="lsql-guide" class="doc-section active">
+    <h1>LSQL Syntax Contract</h1>
+    <p>The Log Query Language (LSQL) allows you to search logs using a flexible and powerful syntax. The core components are search terms, field filters, operators, and groups.</p>
+
+    <h2>1. Search Terms (Barewords)</h2>
   <p>These are used for general, full-text search across the log message and all text attributes.</p>
   
   <div class="example-block">
@@ -124,6 +130,127 @@ _exists_:error.stack</code></pre>
     <p>You can combine existence checks with other filters:</p>
     <pre><code>level:error AND _exists_:error.stack AND service:payment-service</code></pre>
   </div>
+  </section>
+
+  <section id="api-guide" class="doc-section">
+    <h1>Sending Logs to LogFlux</h1>
+    <p>LogFlux provides a straightforward HTTP API for ingesting logs. Send your logs using a simple HTTP POST request to the ingest endpoint with your API key.</p>
+
+    <h2>API Endpoint Details</h2>
+    <div class="example-block">
+      <ul>
+        <li><strong>URL:</strong> <code>https://logflux.tech/api/v1/ingest</code></li>
+        <li><strong>HTTP Method:</strong> POST</li>
+        <li><strong>Authentication:</strong> API key in HTTP header
+          <ul>
+            <li>Header Name: <code>X-Tenant-Api-Key</code></li>
+            <li>Header Value: Your API key (obtained during setup)</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+
+    <h2>Supported Log Formats</h2>
+    <p>LogFlux supports 3 log formats with optimized parsing capabilities:</p>
+
+    <div class="example-block">
+      <h3>1. JSON Format (Recommended)</h3>
+      <p>✓ Fully parsed and indexed<br>
+         ✓ Supports nested JSON structures (flattened during ingestion)<br>
+         ✓ All fields are queryable</p>
+      
+      <h4>Example JSON payload:</h4>
+      <pre><code>{
+  "timestamp": "2025-10-01T14:32:45Z",
+  "level": "INFO",
+  "service": "user-auth",
+  "message": "User login successful",
+  "request": {
+    "ip": "192.168.1.25",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
+    "headers": {
+      "content-type": "application/json",
+      "accept-language": "en-US,en;q=0.9"
+    }
+  },
+  "user": {
+    "id": "u12345",
+    "name": "Alice Johnson",
+    "roles": ["admin", "editor"],
+    "preferences": {
+      "theme": "dark",
+      "notifications": {
+        "email": true,
+        "sms": false,
+        "push": true
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "durationMs": 153,
+    "metadata": {
+      "sessionId": "sess_67890",
+      "region": "us-east-1"
+    }
+  }
+}</code></pre>
+
+      <h4>Send using curl:</h4>
+      <pre><code>curl -X POST \
+  https://logflux.tech/api/v1/ingest \
+  -H "Content-Type: application/json" \
+  -H "X-Tenant-Api-Key: YOUR_API_KEY" \
+  -d '{
+    "timestamp": "2025-10-01T12:30:00Z",
+    "level": "INFO",
+    "message": "Payment processed successfully",
+    "service": "payment-service",
+    "details": {"trace_id": "a1b2c3d4-e5f6"}
+  }'</code></pre>
+    </div>
+
+    <div class="example-block">
+      <h3>2. LogFMT Format</h3>
+      <p>✓ Key-value pair format<br>
+         ✓ Perfect for structured logging<br>
+         ✓ Each field is parsed into a queryable attribute</p>
+
+      <h4>Example LogFMT payload:</h4>
+      <pre><code>ts=2025-10-01T12:35:00Z level=WARN service=order-service msg="Inventory low for product" product_id=p-54321 stock=5</code></pre>
+
+      <h4>Send using curl:</h4>
+      <pre><code>curl -X POST \
+  https://logflux.tech/api/v1/ingest \
+  -H "Content-Type: text/plain" \
+  -H "X-Tenant-Api-Key: YOUR_API_KEY" \
+  -d 'ts=2025-10-01T12:35:00Z level=WARN service=order-service msg="Inventory low for product" product_id=p-54321 stock=5'</code></pre>
+    </div>
+
+    <div class="example-block">
+      <h3>3. Plain Text Format</h3>
+      <p>✓ Supports unstructured log messages<br>
+         ✓ Handles multi-line stack traces<br>
+         ✓ Stored as raw messages with basic search capability</p>
+
+      <h4>Example plain text payload:</h4>
+      <pre><code>2025-10-01T12:40:00Z [http-nio-8080-exec-1] ERROR c.a.MyService - Failed to connect to downstream service
+java.net.ConnectException: Connection refused
+    at java.base/sun.nio.ch.Net.pollConnect(Native Method)
+    at java.base/sun.nio.ch.Net.pollConnectNow(Net.java:672)</code></pre>
+
+      <h4>Send using curl:</h4>
+      <pre><code>curl -X POST \
+  https://logflux.tech/api/v1/ingest \
+  -H "Content-Type: text/plain" \
+  -H "X-Tenant-Api-Key: YOUR_API_KEY" \
+  --data-binary "2025-10-01T12:40:00Z [worker-3] ERROR - Null pointer exception while processing request"</code></pre>
+    </div>
+
+    <div class="note-block">
+      <p>⚠️ Note: Plain text and other non-structured formats will be stored with limited parsing capabilities and basic search functionality.</p>
+    </div>
+  </section>
 </main>
 
 <script>
@@ -138,11 +265,28 @@ document.querySelectorAll('pre code').forEach(block => {
 });
 
 
+function showSection(sectionId) {
+    document.querySelectorAll('.docs-nav a').forEach(link => {
+        if (link.getAttribute('href') === '#' + sectionId) {
+            link.classList.add('active');
+        } else {
+            link.classList.remove('active');
+        }
+    });
+
+    document.querySelectorAll('.doc-section').forEach(section => {
+        if (section.id === sectionId) {
+            section.classList.add('active');
+        } else {
+            section.classList.remove('active');
+        }
+    });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
-    
     const token = localStorage.getItem('jwtToken');
     if (!token) {
-  window.location.href = '/auth.html';
+        window.location.href = '/auth.html';
         return;
     }
 
