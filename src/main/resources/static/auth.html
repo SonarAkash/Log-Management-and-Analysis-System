@@ -16,7 +16,10 @@
     <form id="login-form">
       <input type="email" id="login-email" placeholder="Email" required>
       <input type="password" id="login-password" placeholder="Password" required>
-      <button type="submit">Login</button>
+      <button type="submit" id="login-btn">
+        <span class="spinner" style="display: none;"></span>
+        <span class="button-text">Login</span>
+      </button>
     </form>
     <p>Don't have an account? <a href="#" id="show-signup">Sign Up</a></p>
   </div>
@@ -34,7 +37,10 @@
 
     <form id="signup-complete-form" style="display: none;">
       <input type="text" id="signup-otp" placeholder="Enter OTP from email" required maxlength="6" pattern="[0-9]{6}">
-      <button type="submit">Create Account</button>
+      <button type="submit" id="signup-complete-btn">
+        <span class="spinner" style="display: none;"></span>
+        <span class="button-text">Create Account</span>
+      </button>
       <button type="button" id="resend-otp-btn">Resend OTP</button>
     </form>
 

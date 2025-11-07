@@ -1,3 +1,36 @@
+
+function resetLoginForm() {
+    const loginBtn = document.getElementById('login-btn');
+
+    if (loginBtn) {
+        const spinner = loginBtn.querySelector('.spinner');
+        const buttonText = loginBtn.querySelector('.button-text');
+
+        loginBtn.disabled = false;
+        if (spinner) spinner.style.display = 'none';
+        if (buttonText) buttonText.textContent = 'Login';
+    }
+}
+
+function resetSignupCompleteForm() {
+    const signupBtn = document.getElementById('signup-complete-btn');
+    if (signupBtn) {
+        const spinner = signupBtn.querySelector('.spinner');
+        const buttonText = signupBtn.querySelector('.button-text');
+
+        signupBtn.disabled = false;
+        if (spinner) spinner.style.display = 'none';
+        if (buttonText) buttonText.textContent = 'Create Account';
+    }
+}
+
+window.addEventListener('pageshow', (event) => {
+    if (event.persisted) {
+        resetLoginForm();
+        resetSignupCompleteForm();
+    }
+});
+
 document.addEventListener('DOMContentLoaded', () => {
     const loginView = document.getElementById('login-view');
     const signupView = document.getElementById('signup-view');
@@ -39,6 +72,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
+
+        const loginBtn = document.getElementById('login-btn');
+        const spinner = loginBtn.querySelector('.spinner');
+        const buttonText = loginBtn.querySelector('.button-text');
+
+        loginBtn.disabled = true;
+        spinner.style.display = 'inline-block';
+        buttonText.textContent = 'Logging in...';
+
         const email = document.getElementById('login-email').value;
         const password = document.getElementById('login-password').value;
         try {
@@ -96,6 +138,8 @@ document.addEventListener('DOMContentLoaded', () => {
             window.location.href = '/dashboard.html';
         } catch (error) {
             showNotification(error.message);
+
+            resetLoginForm();
         }
     });
 
@@ -156,6 +200,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     signupCompleteForm.addEventListener('submit', async (e) => {
         e.preventDefault();
+
+        const signupBtn = document.getElementById('signup-complete-btn');
+        const spinner = signupBtn.querySelector('.spinner');
+        const buttonText = signupBtn.querySelector('.button-text');
+
+        signupBtn.disabled = true;
+        spinner.style.display = 'inline-block';
+        buttonText.textContent = 'Creating...';
+
         const otp = document.getElementById('signup-otp').value;
         const password = sessionStorage.getItem('tempPassword');
         const companyName = sessionStorage.getItem('tempCompanyName');
@@ -227,6 +280,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         } catch (error) {
             showNotification(error.message);
+            resetSignupCompleteForm();
         }
     });
 

@@ -114,3 +114,29 @@ body {
     padding: 5px 10px;
     font-size: 0.8rem;
 }
+
+
+
+.spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--bg-medium);
+  border-top-color: var(--bg-darkest);
+  border-radius: 50%;
+  animation: spin 1s ease-in-out infinite;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+#signup-complete-btn .button-text {
+  vertical-align: middle;
+}
+
+#login-btn .button-text {
+  vertical-align: middle;
+}
